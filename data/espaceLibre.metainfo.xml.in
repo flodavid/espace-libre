@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 flodavid -->
+<component type="desktop-application">
+  <id>fr.flodavid.espaceLibre</id>
+  <launchable type="desktop-id">fr.flodavid.espaceLibre.desktop</launchable>
+  <translation type="gettext">fr.flodavid.espaceLibre</translation>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+
+  <name>Espace Libre</name>
+  <summary>See space used on your disks</summary>
+  <description>
+    <p>Quickly visualize the space used and available on your storage devices, in a GUI.</p>
+  </description>
+
+  <screenshots>
+    <screenshot environment="pantheon" type="default">
+      <caption>Quickly visualize free disks space</caption>
+      <image>https://TODO.png</image>
+    </screenshot>
+    <screenshot environment="pantheon:dark" type="default">
+      <caption>Quickly visualize free disks space</caption>
+      <image>https://TODO.png</image>
+    </screenshot>
+  </screenshots>
+
+  <branding>
+    <color type="primary">#f37329</color>
+    <color type="primary" scheme_preference="light">#ffa154</color>
+    <color type="primary" scheme_preference="dark">#cc3b02</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <provides>
+    <binary>fr.flodavid.espaceLibre</binary>
+  </provides>
+
+  <recommends>
+    <display_length compare="ge">380</display_length>
+  </recommends>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+
+  <url type="homepage">https://github.com/flodavid/espacelibre</url>
+
+  <developer id="fr.flodavid">
+    <name>flodavid</name>
+  </developer>
+
+  <releases>
+    <release version="0.1.0" date="2026-04-11" />
+  </releases>
+</component>

@@ -1,0 +1,173 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beatbox 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-22 16:59+0000\n"
+"PO-Revision-Date: 2025-09-10 08:55+0000\n"
+"Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
+"Language-Team: French <https://l10n.elementaryos.org/projects/music/music/fr/"
+">\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.11.4\n"
+"X-Launchpad-Export-Date: 2017-03-07 05:52+0000\n"
+
+
+#: src/Application.vala:86 src/Views/SelectedDiskView.vala:8
+#: src/Views/SelectedDiskView.vala:52
+msgid "Disk"
+msgstr "Disque"
+
+#: src/Views/SelectedDiskView.vala:12 src/Views/SelectedDiskView.vala:51
+msgid "Not mounted"
+msgstr "Non monté"
+
+#: src/Views/DisksView.vala:23
+msgid "Refresh"
+msgstr "Rafraîchir"
+
+#~ msgid "Unknown"
+#~ msgstr "Inconnu"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Empty device!"
+#~ msgstr "Périphérique vide !"
+
+#~ msgid "Close"
+#~ msgstr "Fermer"
+
+#~ msgid "items"
+#~ msgstr "éléments"
+
+#~ msgid "Options"
+#~ msgstr "Paramètres"
+
+#~ msgid "Remove"
+#~ msgstr "Retirer"
+
+#~ msgid "Device Name:"
+#~ msgstr "Nom du périphérique :"
+
+#~ msgid "Device Name"
+#~ msgstr "Nom du périphérique"
+
+#~ msgid "Show in File Browser…"
+#~ msgstr "Afficher dans le gestionnaire de fichiers…"
+
+#~ msgid "Other Actions"
+#~ msgstr "Autres actions"
+
+#~ msgid "Rename"
+#~ msgstr "Renommer"
+
+#~ msgid "Edit…"
+#~ msgstr "Modifier…"
+
+#~ msgid "Eject"
+#~ msgstr "Éjecter"
+
+#~ msgid "Devices"
+#~ msgstr "Périphériques"
+
+#~ msgid "View as list"
+#~ msgstr "Vue par liste"
+
+#~ msgid "View in columns"
+#~ msgstr "Vue en colonnes"
+
+#~ msgid "An Error Occurred"
+#~ msgstr "Une erreur est survenue"
+
+#~ msgid "Disk:"
+#~ msgstr "Disque :"
+
+#~ msgid "No disk found."
+#~ msgstr "Aucun disque n'a été trouvé."
+
+#~ msgid "All"
+#~ msgstr "Tous"
+
+#~ msgid "Hide"
+#~ msgstr "Masquer"
+
+#~ msgid "Show Info Panel"
+#~ msgstr "Afficher le panneau d'information"
+
+#~ msgid "Show"
+#~ msgstr "Afficher"
+
+#~ msgid "Hide Info Panel"
+#~ msgstr "Masquer le panneau d'information"
+
+#~ msgid "Free"
+#~ msgstr "Libre"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Edit"
+#~ msgstr "Modifier"
+
+#~ msgid "Done"
+#~ msgstr "Terminé"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#~ msgid "Date"
+#~ msgstr "Date"
+
+#~ msgid "Category"
+#~ msgstr "Catégorie"
+
+#~ msgid "Success!"
+#~ msgstr "Opération réussie !"
+
+#~ msgid "Unsuccessful. Click to try again."
+#~ msgstr "Échec, cliquez pour réessayer."
+
+#~ msgid "Disk Type"
+#~ msgstr "Type de disque"
+
+#~ msgid "Editing %s by %s"
+#~ msgstr "Modification de %s par %s"
+
+#~ msgid "Try again"
+#~ msgstr "Réessayer"
+
+#~ msgid "Editing %s"
+#~ msgstr "Modification de %s"
+
+#~ msgid "Remove %d %s from %s?"
+#~ msgstr "Supprimer %d %s de %s?"
+
+#~ msgid "%i items"
+#~ msgstr "%i éléments"
+
+#~ msgid "1 item"
+#~ msgstr "1 élément"
+
+#~ msgid "The name %s is already in use"
+#~ msgstr "Le nom %s est déjà utilisé"
+
+#~ msgid "Display Disk Image Art"
+#~ msgstr "Afficher le logo du périphérique"
+
+#~ msgid "Desktop Integration:"
+#~ msgstr "Intégration dans le bureau :"
+
+#~ msgid "Details"
+#~ msgstr "Détails"
+
+#~ msgid "About Espace Libre"
+#~ msgstr "À propos de Espace Libre"

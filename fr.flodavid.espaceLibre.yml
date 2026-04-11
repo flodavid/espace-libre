@@ -1,0 +1,17 @@
+id: fr.flodavid.espaceLibre
+runtime: io.elementary.Platform
+runtime-version: '8.2'
+sdk: io.elementary.Sdk
+command: fr.flodavid.espaceLibre
+finish-args:
+  - '--share=ipc'
+  - '--socket=fallback-x11'
+  - '--socket=wayland'
+  - '--device=dri'
+
+modules:
+  - name: espaceLibre
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .

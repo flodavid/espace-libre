@@ -1,0 +1,8 @@
+src/Application.vala
+src/MainWindow.vala
+src/SelectedDiskManager.vala
+src/Views/SelectedDiskView.vala
+src/Views/DisksView.vala
+src/Widgets/DiskImage.vala
+src/Widgets/DiskRow.vala
+src/Widgets/UsedSpaceBar.vala

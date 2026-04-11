@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.5
+Type=Application
+
+Name=Espace Libre
+Comment=Visualise partition size and free space
+Categories=Utility;GTK;
+Keywords=Disk;Space;Libre;
+
+Icon=fr.flodavid.espaceLibre
+Exec=fr.flodavid.espaceLibre %U
+SingleMainWindow=true
+StartupNotify=true
+Terminal=false
+
+X-GNOME-UsesNotifications=true

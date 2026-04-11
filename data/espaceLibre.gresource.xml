@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/fr/flodavid/espaceLibre">
+    <file compressed="true">Application.css</file>
+  </gresource>
+  <gresource prefix="/fr/flodavid/espaceLibre/icons">
+  </gresource>
+</gresources>
