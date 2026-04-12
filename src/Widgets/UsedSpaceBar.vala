@@ -37,26 +37,25 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Box {
             _used_space = position;
 
             if (position != 0) {
-                filled.set_value ((double) 1 / available_space * position);
+                filled.set_fraction ((double) 1 / available_space * position);
             } else {
-                filled.set_value (0);
+                filled.set_fraction (0);
             }
         }
     }
 
     private Gtk.Label free_space_label;
-    private Gtk.Range filled;
+    private Gtk.ProgressBar filled;
 
     construct {
         free_space_label = new Gtk.Label ("--/--") {
             use_markup = true
         };
 
-        filled = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 0, 1, 0.1) {
-            draw_value = false,
+        filled = new Gtk.ProgressBar () {
             hexpand = true
         };
-        filled.add_css_class (Granite.STYLE_CLASS_ACCENT);
+        filled.add_css_class (Granite.CssClass.ACCENT);
 
         spacing = 6;
         add_css_class ("seek-bar");

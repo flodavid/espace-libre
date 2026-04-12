@@ -37,7 +37,7 @@ album {
                 0
             ) 44%
         ),
-        -gtk-icontheme("audio-x-generic-symbolic"),
+        -gtk-icontheme("drive-harddisk-symbolic"),
         linear-gradient(
             to bottom,
             @base_color,

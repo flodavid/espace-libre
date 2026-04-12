@@ -12,8 +12,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
         set {
             if (_partition_object != null) {
-                _partition_object.notify["artist"].disconnect (update_mount_point);
-                _partition_object.notify["title"].disconnect (update_disk_label);
+                _partition_object.notify["mount-point"].disconnect (update_mount_point);
+                _partition_object.notify["name"].disconnect (update_disk_label);
                 _partition_object.notify["texture"].disconnect (update_cover_art);
             }
 
@@ -26,8 +26,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             update_mount_point ();
             update_disk_label ();
             update_cover_art ();
-            _partition_object.notify["artist"].connect (update_mount_point);
-            _partition_object.notify["title"].connect (update_disk_label);
+            _partition_object.notify["mount-point"].connect (update_mount_point);
+            _partition_object.notify["name"].connect (update_disk_label);
             _partition_object.notify["texture"].connect (update_cover_art);
 
         }
@@ -37,19 +37,19 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
     private Gtk.Label mount_point;
     private Gtk.Label disk_label;
-    private EspaceLibre.DiskImage album_image;
+    private EspaceLibre.DiskImage disk_image;
 
     static construct {
         playback_manager = DisksManager.get_default ();
     }
 
     construct {
-        album_image = new EspaceLibre.DiskImage ();
-        album_image.image.height_request = 32;
-        album_image.image.width_request = 32;
+        disk_image = new EspaceLibre.DiskImage ();
+        disk_image.image.height_request = 32;
+        disk_image.image.width_request = 32;
 
         var aspect_frame = new Gtk.AspectFrame (0.5f, 0.5f, 1, false) {
-            child = album_image
+            child = disk_image
         };
 
         disk_label = new Gtk.Label (null) {
@@ -63,8 +63,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             hexpand = true,
             xalign = 0
         };
-        mount_point.add_css_class (Granite.STYLE_CLASS_DIM_LABEL);
-        mount_point.add_css_class (Granite.STYLE_CLASS_SMALL_LABEL);
+        mount_point.add_css_class (Granite.CssClass.DIM);
+        mount_point.add_css_class (Granite.CssClass.SMALL);
 
         var grid = new Gtk.Grid () {
             column_spacing = 12,
@@ -89,6 +89,6 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_cover_art () {
-        album_image.image.paintable = _partition_object.texture;
+        disk_image.image.paintable = _partition_object.texture;
     }
 }

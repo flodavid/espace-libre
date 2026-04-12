@@ -40,13 +40,12 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         append (grid);
 
         var playback_manager = DisksManager.get_default ();
-        playback_manager.bind_property ("playback-position", used_bar, "playback-position");
 
         playback_manager.notify["current-audio"].connect (() => {
-            if (playback_manager.current_audio != null) {
-                playback_manager.current_audio.bind_property ("artist", mount_point, "label", BindingFlags.SYNC_CREATE);
-                playback_manager.current_audio.bind_property ("title", disk_label, "label", BindingFlags.SYNC_CREATE);
-                playback_manager.current_audio.bind_property ("duration", used_bar, "playback-duration", BindingFlags.SYNC_CREATE);
+            if (playback_manager.current_disk != null) {
+                playback_manager.current_disk.bind_property ("mount-point", mount_point, "label", BindingFlags.SYNC_CREATE);
+                playback_manager.current_disk.bind_property ("name", disk_label, "label", BindingFlags.SYNC_CREATE);
+                playback_manager.current_disk.bind_property ("duration", used_bar, "playback-duration", BindingFlags.SYNC_CREATE);
             } else {
                 mount_point.label = _("Not mounted");
                 disk_label.label = _("Disk");

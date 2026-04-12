@@ -13,8 +13,7 @@ public class EspaceLibre.DiskImage : Gtk.Grid {
     construct {
         image = new Gtk.Image ();
 
-        add_css_class (Granite.STYLE_CLASS_CARD);
-        add_css_class (Granite.STYLE_CLASS_ROUNDED);
+        add_css_class (Granite.CssClass.CARD);
         overflow = Gtk.Overflow.HIDDEN;
         attach (image, 0, 0);
     }

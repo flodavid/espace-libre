@@ -26,7 +26,8 @@ gtk_dep = dependency('gtk4')
 dependencies = [
     adw_dep,
     granite_dep,
-    gtk_dep
+    gtk_dep,
+    meson.get_compiler('vala').find_library('posix'),
 ]
 
 gnome.post_install(glib_compile_schemas: true)

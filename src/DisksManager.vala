@@ -4,7 +4,7 @@
  */
 
 public class EspaceLibre.DisksManager : Object {
-    public DiskEntry? current_audio { get; set; default = null; }
+    public DiskEntry? current_disk { get; set; default = null; }
     public ListStore disks_liststore { get; private set; }
     public bool has_items { get; private set; }
     public uint n_items {
@@ -20,11 +20,7 @@ public class EspaceLibre.DisksManager : Object {
         return instance.once (() => { return new DisksManager (); });
     }
 
-    private uint progress_timer = 0;
     private Settings settings;
-
-
-    private bool next_by_eos = false;
 
     private SimpleAction refresh_action;
 
@@ -48,16 +44,12 @@ public class EspaceLibre.DisksManager : Object {
         app.add_action (refresh_action);
     }
 
-    public void show_disks (DiskEntry[] disks) {
-        foreach (unowned var disk in disks) {
-            disks_liststore.append (disk);
-        }
+    public void show_disk (DiskEntry disk) {
+        disks_liststore.append (disk);
     }
 
     private void refresh () {
         var temp_list = new ListStore (typeof (DiskEntry));
-
-        uint position = -1;
 
         while (disks_liststore.get_n_items () > 0) {
             var random_position = Random.int_range (0, (int32) disks_liststore.get_n_items ());
