@@ -4,10 +4,11 @@
  */
 
 public class EspaceLibre.DiskEntry : Object {
-    public string file_system_type { get; construct; }
-    public Gdk.Texture? texture { get; private set; default = null; }
+    public Gdk.Texture? texture { get; private set; default = null; } // TOOD replace by enum for disk type
+    
+    public string file_system { get; construct; }
     public string mount_point { get; set; }
-    public string format_type { get; construct; }
+    public string fs_type { get; set; }
     public string mount_options { get; construct; }
     public string dump { get; construct; }
     public string pass { get; construct; }
@@ -16,30 +17,15 @@ public class EspaceLibre.DiskEntry : Object {
     public bool mounted { get; set; }
     public int64 total_space { get; set; default = 0; }
 
-    public DiskEntry (string file_system_type, string mount_point, string format_type, string mount_options,
+    public DiskEntry (string file_system, string mount_point, string format_type, string mount_options,
         string dump, string pass)
     {
-        Object (file_system_type: file_system_type, mount_point: mount_point, format_type: format_type,
+        Object (file_system: file_system, mount_point: mount_point, fs_type: format_type,
             mount_options: mount_options, dump: dump, pass: pass);
     }
 
     construct {
-        name = file_system_type;
+        name = file_system;
         mounted = false;
-    }
-
-    public void update_metadata (string info) {
-        // TODO read data from fstab line
-        total_space = (int64) 0;
-
-        string _name = "";
-        //  tag_list.get_string (Gst.Tags.TITLE, out _name);
-        if (_name != null) {
-            name = _name;
-        }
-    }
-
-    public static bool equal_func (DiskEntry a, DiskEntry b) {
-        return (a.file_system_type == b.file_system_type);
     }
 }

@@ -48,17 +48,19 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Box {
     private Gtk.ProgressBar filled;
 
     construct {
+        orientation = Gtk.Orientation.HORIZONTAL;
+        spacing = 6;
+
         free_space_label = new Gtk.Label ("--/--") {
+            valign = CENTER,
             use_markup = true
         };
 
         filled = new Gtk.ProgressBar () {
+            valign = CENTER,
             hexpand = true
         };
-        filled.add_css_class (Granite.CssClass.ACCENT);
 
-        spacing = 6;
-        add_css_class ("seek-bar");
         append (filled);
         append (free_space_label);
     }

@@ -9,11 +9,11 @@ public class EspaceLibre.DisksView : Granite.Bin {
     private Gtk.ListView disks_listview;
     private Gtk.ScrolledWindow scrolled;
     private Gtk.SingleSelection selection_model;
+    private Gtk.SignalListItemFactory factory;
     private Gtk.Stack disks_stack;
     private Settings settings;
     private GLib.ListStore disks;
     private DisksManager disks_manager;
-    private Gtk.SignalListItemFactory factory;
 
     construct {
         disks_manager = DisksManager.get_default ();
@@ -46,10 +46,11 @@ public class EspaceLibre.DisksView : Granite.Bin {
         };
         selection_model.items_changed.connect (on_items_changed);
 
+        var labels_size_group = new Gtk.SizeGroup (Gtk.SizeGroupMode.HORIZONTAL);
         factory = new Gtk.SignalListItemFactory ();
         factory.setup.connect ((obj) => {
             var list_item = (Gtk.ListItem) obj;
-            list_item.child = new DiskRow ();
+            list_item.child = new DiskRow (labels_size_group);
         });
 
         factory.bind.connect ((obj) => {
@@ -164,20 +165,16 @@ public class EspaceLibre.DisksView : Granite.Bin {
                             }
                         }
 
-                        warning("Partition identifier: [%s]", file_system);
-                        var disk = new DiskEntry (file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
-                        disk.uuid = uuid;
+                        if (is_real_disk (file_system, columns[2], columns[1])) {
+                            warning("Partition identifier: [%s]", file_system);
+                            var disk = new DiskEntry (file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
+                            disk.uuid = uuid;
 
-                        disks.append(disk);
+                            disks.append(disk);
+                        } else {
+                            warning("Partition [%s] is 'virtual', do not add it", file_system);                            
+                        }
                     }
-
-                    //  if ((disk->deviceName() != QLatin1String("none")) && (disk->fsType() != QLatin1String("swap")) && (disk->fsType() != QLatin1String("sysfs"))
-                    //      && (disk->fsType() != QLatin1String("rootfs")) && (disk->fsType() != QLatin1String("tmpfs")) && (disk->fsType() != QLatin1String("debugfs"))
-                    //      && (disk->fsType() != QLatin1String("devtmpfs")) && (disk->mountPoint() != QLatin1String("/dev/swap"))
-                    //      && (disk->mountPoint() != QLatin1String("/dev/pts")) && (disk->mountPoint() != QLatin1String("/dev/shm"))
-                    //      && (!disk->mountPoint().startsWith(QLatin1String("/sys/"))) && (!disk->mountPoint().startsWith(QLatin1String("/proc/")))) {
-                    //      replaceDeviceEntry(disk);
-                    //  }
                 }
             }
         }
@@ -192,5 +189,17 @@ public class EspaceLibre.DisksView : Granite.Bin {
         }
 
         disks_stack.visible_child = disk_list_placeholder;
+    }
+
+    /**
+     * Check if filesystem is named "none" or is swap, sysfs, rootfs, tmpfs (/dev/shm), debugfs, devtmpfs,
+     *  /dev/pts or /proc/*
+     */
+    private static bool is_real_disk (string device_name, string fs_type, string mount_point) {
+        return device_name != "none"
+            && fs_type != "swap" && fs_type != "sysfs" && fs_type != "rootfs" && fs_type != "tmpfs"
+            && fs_type != "debugfs" && fs_type != "devtmpfs" && fs_type != "proctmpfs"
+            && mount_point != "/dev/swap" && mount_point != "/dev/pts" && mount_point != "/dev/shm"
+            && !mount_point.has_prefix ("/sys/") && !mount_point.has_prefix ("/proc/");
     }
 }

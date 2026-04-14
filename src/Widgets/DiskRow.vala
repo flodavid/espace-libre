@@ -38,12 +38,16 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     private Gtk.Label mount_point;
     private Gtk.Label disk_label;
     private EspaceLibre.DiskImage disk_image;
+    private EspaceLibre.UsedSpaceBar space_bar;
+    private Gtk.SizeGroup labels_size_group;
 
     static construct {
         playback_manager = DisksManager.get_default ();
     }
 
-    construct {
+    public DiskRow (Gtk.SizeGroup _labels_size_group) {
+        labels_size_group = _labels_size_group;
+        
         disk_image = new EspaceLibre.DiskImage ();
         disk_image.image.height_request = 32;
         disk_image.image.width_request = 32;
@@ -54,17 +58,20 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
         disk_label = new Gtk.Label (null) {
             ellipsize = Pango.EllipsizeMode.MIDDLE,
-            hexpand = true,
+            hexpand = false,
             xalign = 0
         };
+        labels_size_group.add_widget (disk_label);
 
         mount_point = new Gtk.Label (null) {
             ellipsize = Pango.EllipsizeMode.MIDDLE,
-            hexpand = true,
+            hexpand = false,
             xalign = 0
         };
         mount_point.add_css_class (Granite.CssClass.DIM);
         mount_point.add_css_class (Granite.CssClass.SMALL);
+
+        space_bar = new UsedSpaceBar ();
 
         var grid = new Gtk.Grid () {
             column_spacing = 12,
@@ -76,6 +83,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         grid.attach (aspect_frame, 0, 0, 1, 2);
         grid.attach (disk_label, 1, 0);
         grid.attach (mount_point, 1, 1);
+        grid.attach (space_bar, 2, 0, 1, 2);
 
         child = grid;
     }
