@@ -45,7 +45,6 @@ public class EspaceLibre.Application : Gtk.Application {
         var gtk_settings = Gtk.Settings.get_default ();
 
         gtk_settings.gtk_icon_theme_name = "elementary";
-        gtk_settings.gtk_theme_name = "io.elementary.stylesheet.orange";
 
         gtk_settings.gtk_application_prefer_dark_theme = (
             granite_settings.prefers_color_scheme == DARK
@@ -65,7 +64,7 @@ public class EspaceLibre.Application : Gtk.Application {
         }
 
         var main_window = new MainWindow () {
-            title = _("EspaceLibre")
+            title = _("Espace Libre")
         };
         main_window.present ();
 

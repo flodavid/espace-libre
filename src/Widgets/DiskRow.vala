@@ -23,8 +23,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
                 return;
             }
 
-            update_mount_point ();
-            update_disk_label ();
+            update_all ();
             update_cover_art ();
             _partition_object.notify["mount-point"].connect (update_mount_point);
             _partition_object.notify["name"].connect (update_disk_label);
@@ -86,6 +85,13 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         grid.attach (space_bar, 2, 0, 1, 2);
 
         child = grid;
+    }
+
+    private void update_all () {
+        disk_label.label = _partition_object.name;
+        mount_point.label = _partition_object.mount_point;
+        space_bar.space_size = _partition_object.kb_size;
+        space_bar.used_space = _partition_object.kb_used;
     }
 
     private void update_disk_label () {

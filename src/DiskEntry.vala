@@ -15,7 +15,9 @@ public class EspaceLibre.DiskEntry : Object {
     public string name { get; set; }
     public string uuid { get; set; }
     public bool mounted { get; set; }
-    public int64 total_space { get; set; default = 0; }
+    public uint64 kb_size { get; set; default = 0; }
+    public uint64 kb_used { get; set; default = 0; }
+    public uint64 kb_avail { get; set; default = 0; }
 
     public DiskEntry (string file_system, string mount_point, string format_type, string mount_options,
         string dump, string pass)
