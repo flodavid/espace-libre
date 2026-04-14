@@ -4,70 +4,61 @@
  */
 
 public class EspaceLibre.UsedSpaceBar : Gtk.Box {
-    private int64 _available_space;
-    public int64 available_space {
-        get {
-            return _available_space;
-        }
-        set {
-            int64 space = value;
-            if (space < 0) {
-                space = 0;
-            }
+    public uint64 space_size { get; set; }
 
-            _available_space = space;
-
-            free_space_label.label = "<span font-features='tnum'>%d</span>".printf (
-                (int) (space / 1024)
-            );
-        }
-    }
-
-    private int64 _used_space;
-    public int64 used_space {
+    private uint64 _used_space;
+    public uint64 used_space {
         get {
             return _used_space;
         }
         set {
-            int64 position = value;
-            if (position < 0) {
-                position = 0;
-            }
+            _used_space = value;
 
-            _used_space = position;
-
-            if (position != 0) {
-                filled.set_fraction ((double) 1 / available_space * position);
+            if (space_size != 0) {
+                filled_bar.value = _used_space * 100.0 / space_size;
+                free_space_label.label = "<span font-features='tnum'>%3u %</span>".printf ((uint)filled_bar.value);
             } else {
-                filled.set_fraction (0);
+                filled_bar.value = 0;
             }
         }
     }
 
     private Gtk.Label free_space_label;
-    private Gtk.ProgressBar filled;
+    private Gtk.LevelBar filled_bar;
 
     construct {
+        space_size = 0;
+
         orientation = Gtk.Orientation.HORIZONTAL;
         spacing = 6;
 
-        free_space_label = new Gtk.Label ("--/--") {
+        free_space_label = new Gtk.Label ("--%") {
             valign = CENTER,
             use_markup = true
         };
 
-        filled = new Gtk.ProgressBar () {
+        filled_bar = new Gtk.LevelBar () {
             valign = CENTER,
-            hexpand = true
+            hexpand = true,
+            max_value = 100
         };
 
-        append (filled);
+        filled_bar.add_offset_value ("low", 90);
+        filled_bar.add_offset_value ("high", 99);
+        filled_bar.add_offset_value ("full", 100);
+
+        append (filled_bar);
         append (free_space_label);
     }
 
     private void scale_value_changed () {
-        free_space_label.label = "<span font-features='tnum'>%d</span>".printf (
-            (int) (_available_space / 1024)
-        );
+        if (space_size == 0) {
+            filled_bar.value = 0;
+            free_space_label.label = "  0%";
+            return;
+        }
+
+        filled_bar.value = (double)_used_space * 100.0 / space_size;
+        free_space_label.label = "<span font-features='tnum'>%3u %</span>".printf ((uint)filled_bar.value);
     }
 }

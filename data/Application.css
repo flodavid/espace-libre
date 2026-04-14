@@ -3,23 +3,6 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-toolbarview revealer.bottom-bar.raised {
-    box-shadow: 0 -1px alpha(@highlight_color, 0.2);
-    background-color: alpha(black, 0.01);
-    background-image:
-        linear-gradient(
-            to bottom,
-            @borders 1px,
-            alpha(black, 0.07) 1px,
-            transparent 3px
-        );
-    color: mix(@text_color, @insensitive_bg_color, 0.15);
-}
-
-toolbarview revealer.bottom-bar actionbar {
-    padding: 6px;
-}
-
 album {
     background-image:
         linear-gradient(
@@ -47,4 +30,20 @@ album {
     background-repeat: no-repeat;
     background-position: center center;
     color: alpha(@insensitive_fg_color, 0.75);
+}
+
+levelbar empty {
+  background-color: @accent_color;
+}
+
+levelbar block.low {
+  background-color: @accent_color;
+}
+
+levelbar block.high {
+  background-color: orange;
+}
+
+levelbar block.full {
+  background-color: orangered;
 }

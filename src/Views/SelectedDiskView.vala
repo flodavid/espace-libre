@@ -49,7 +49,7 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
             } else {
                 mount_point.label = _("Not mounted");
                 disk_label.label = _("Disk");
-                used_bar.available_space = 0;
+                used_bar.space_size = 0;
                 used_bar.used_space = 0;
             }
         });
