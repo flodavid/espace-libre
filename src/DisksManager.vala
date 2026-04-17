@@ -34,8 +34,6 @@ public class EspaceLibre.DisksManager : Object {
 
         notify["current-audio"].connect (on_selected_disk_changed);
 
-        settings = new Settings ("fr.flodavid.espaceLibre");
-
         refresh_action = new SimpleAction (Application.ACTION_REFRESH, null);
         refresh_action.activate.connect (refresh);
         refresh_action.set_enabled (true);

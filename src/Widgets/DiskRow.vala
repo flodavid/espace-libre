@@ -91,6 +91,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         disk_label.label = _partition_object.name;
         mount_point.label = _partition_object.mount_point;
         space_bar.space_size = _partition_object.kb_size;
+        space_bar.free_space = _partition_object.kb_avail;
         space_bar.used_space = _partition_object.kb_used;
     }
 

@@ -9,7 +9,6 @@ public class EspaceLibre.DisksView : Granite.Bin {
     private Gtk.Button refresh_button;
     private Gtk.ListView disks_listview;
     private Gtk.ScrolledWindow scrolled;
-    private Gtk.SingleSelection selection_model;
     private Gtk.SignalListItemFactory factory;
     private Gtk.Stack disks_stack;
     private DisksManager disks_manager;
