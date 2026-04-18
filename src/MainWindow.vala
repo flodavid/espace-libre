@@ -8,8 +8,10 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
     public const string ACTION_OPEN = "action-open";
 
     private DisksView disks_view;
+    private DisksManager disks_manager;
 
     construct {
+        // disks_view and selected_disk_view must be created before reading fstab and df command
         disks_view = new DisksView ();
 
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
@@ -56,10 +58,14 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
 
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
+
+        disks_manager = DisksManager.get_default ();
+        disks_manager.readFSTAB ();
+        disks_manager.readDF ();
     }
 
     public void start_refresh () {
-        // TODO refresh disks
+        disks_manager.refresh ();
     }
 
 }

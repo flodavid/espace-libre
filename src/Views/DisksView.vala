@@ -107,9 +107,6 @@ public class EspaceLibre.DisksView : Granite.Bin {
         disks_listview.activate.connect ((index) => {
             disks_manager.current_disk = (DiskEntry) selection_model.get_item (index);
         });
-
-        disks_manager.readFSTAB ();
-        disks_manager.readDF ();
     }
 }
 

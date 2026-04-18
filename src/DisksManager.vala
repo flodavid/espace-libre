@@ -23,7 +23,6 @@ public class EspaceLibre.DisksManager : Object {
     private static GLib.Once<DisksManager> instance;
 
     private bool readingDFStdErrOut;
-    private SimpleAction refresh_action;
     private DisksManager () {}
 
     construct {
@@ -31,15 +30,6 @@ public class EspaceLibre.DisksManager : Object {
         disks = new ListStore (typeof (DiskEntry));
 
         disks.items_changed.connect (on_items_changed);
-
-        notify["current-audio"].connect (on_selected_disk_changed);
-
-        refresh_action = new SimpleAction (Application.ACTION_REFRESH, null);
-        refresh_action.activate.connect (refresh);
-        refresh_action.set_enabled (true);
-
-        unowned var app = GLib.Application.get_default ();
-        app.add_action (refresh_action);
     }
 
     public void show_disk (DiskEntry disk) {
@@ -198,6 +188,7 @@ public class EspaceLibre.DisksManager : Object {
                             disk.kb_avail = uint64.parse (words[4]);
                             //  disk.avail_percent = words[5]; // can be calculated
                             disk.mounted = true; // it is now mounted (df lists only mounted)
+
                         }
                     }
                 } else {
@@ -210,19 +201,17 @@ public class EspaceLibre.DisksManager : Object {
         //  loadSettings(); // to get the mountCommands
     }
 
-    private void refresh () {
-        var temp_list = new ListStore (typeof (DiskEntry));
+    // TODO add periodic refresh with "readDF ()"
+    public void refresh () {
+        info ("Remove and rescan disks");
 
-        while (disks.get_n_items () > 0) {
-            var random_position = Random.int_range (0, (int32) disks.get_n_items ());
-
-            temp_list.append (disks.get_item (random_position));
-            disks.remove (random_position);
+        while (disks.n_items > 0) {
+            disks.remove (0);
         }
 
-        for (int i = 0; i < temp_list.get_n_items (); i++) {
-            disks.append (temp_list.get_item (i));
-        }
+        readFSTAB ();
+        readDF ();
+        on_items_changed ();
     }
 
     public void on_items_changed () {

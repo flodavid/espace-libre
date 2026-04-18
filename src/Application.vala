@@ -34,8 +34,6 @@ public class EspaceLibre.Application : Gtk.Application {
 
         Granite.init ();
 
-        playback_manager = DisksManager.get_default ();
-
         add_action_entries (ACTION_ENTRIES, this);
 
         set_accels_for_action (ACTION_PREFIX + ACTION_REFRESH, {"<Ctrl>R"});

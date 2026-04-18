@@ -14,6 +14,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             if (_partition_object != null) {
                 _partition_object.notify["mount-point"].disconnect (update_mount_point);
                 _partition_object.notify["name"].disconnect (update_disk_label);
+                _partition_object.notify["kb-size"].disconnect (update_sizes);
+                _partition_object.notify["kb-avail"].disconnect (update_sizes);
                 _partition_object.notify["texture"].disconnect (update_cover_art);
             }
 
@@ -27,8 +29,9 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             update_cover_art ();
             _partition_object.notify["mount-point"].connect (update_mount_point);
             _partition_object.notify["name"].connect (update_disk_label);
+            _partition_object.notify["kb-size"].connect (update_sizes);
+            _partition_object.notify["kb-avail"].connect (update_sizes);
             _partition_object.notify["texture"].connect (update_cover_art);
-
         }
     }
 
@@ -90,9 +93,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     private void update_all () {
         disk_label.label = _partition_object.name;
         mount_point.label = _partition_object.mount_point;
-        space_bar.space_size = _partition_object.kb_size;
-        space_bar.free_space = _partition_object.kb_avail;
-        space_bar.used_space = _partition_object.kb_used;
+        update_sizes ();
     }
 
     private void update_disk_label () {
@@ -105,5 +106,11 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
     private void update_cover_art () {
         disk_image.image.paintable = _partition_object.texture;
+    }
+
+    private void update_sizes () {
+        space_bar.space_size = _partition_object.kb_size;
+        space_bar.free_space = _partition_object.kb_avail;
+        space_bar.used_space = _partition_object.kb_used;
     }
 }
