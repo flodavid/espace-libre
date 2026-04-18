@@ -13,8 +13,6 @@ public class EspaceLibre.Application : Gtk.Application {
         { ACTION_QUIT, quit }
     };
 
-    private DisksManager? playback_manager = null;
-
     public Application () {
         Object (
             application_id: "fr.flodavid.espaceLibre",
@@ -33,8 +31,6 @@ public class EspaceLibre.Application : Gtk.Application {
         base.startup ();
 
         Granite.init ();
-
-        playback_manager = DisksManager.get_default ();
 
         add_action_entries (ACTION_ENTRIES, this);
 
