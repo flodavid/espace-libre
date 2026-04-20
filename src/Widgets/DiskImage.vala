@@ -7,7 +7,7 @@ public class EspaceLibre.DiskImage : Gtk.Grid {
     public Gtk.Image image;
 
     class construct {
-        set_css_name ("album");
+        set_css_name ("disk_image");
     }
 
     construct {

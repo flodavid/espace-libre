@@ -3,7 +3,14 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-album {
+disk_image {
+    background-size: cover, 50%, cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: alpha(@insensitive_fg_color, 0.75);
+}
+
+device_hdd {
     background-image:
         linear-gradient(
             170deg,
@@ -26,10 +33,81 @@ album {
             @base_color,
             @base_color
         );
-    background-size: cover, 50%, cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    color: alpha(@insensitive_fg_color, 0.75);
+}
+
+device_ssd {
+    background-image:
+        linear-gradient(
+            170deg,
+            alpha(
+                @highlight_color,
+                0.1
+            ),
+            alpha(
+                @highlight_color,
+                0.15
+            ) 43%,
+            alpha(
+                @highlight_color,
+                0
+            ) 44%
+        ),
+        -gtk-icontheme("drive-harddisk-solidstate-symbolic"),
+        linear-gradient(
+            to bottom,
+            @base_color,
+            @base_color
+        );
+}
+
+device_usb {
+    background-image:
+        linear-gradient(
+            170deg,
+            alpha(
+                @highlight_color,
+                0.1
+            ),
+            alpha(
+                @highlight_color,
+                0.15
+            ) 43%,
+            alpha(
+                @highlight_color,
+                0
+            ) 44%
+        ),
+        -gtk-icontheme("drive-removable-media-usb-symbolic"),
+        linear-gradient(
+            to bottom,
+            @base_color,
+            @base_color
+        );
+}
+
+device_nvme {
+    background-image:
+        linear-gradient(
+            170deg,
+            alpha(
+                @highlight_color,
+                0.1
+            ),
+            alpha(
+                @highlight_color,
+                0.15
+            ) 43%,
+            alpha(
+                @highlight_color,
+                0
+            ) 44%
+        ),
+        -gtk-icontheme("drive-harddisk-solidstate-symbolic"),
+        linear-gradient(
+            to bottom,
+            @base_color,
+            @base_color
+        );
 }
 
 levelbar empty {

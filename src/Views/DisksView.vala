@@ -23,11 +23,14 @@ public class EspaceLibre.DisksView : Granite.Bin {
             tooltip_text = _("Refresh")
         };
 
+        var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
+
         var disk_list_header = new Gtk.HeaderBar () {
             show_title_buttons = false,
         };
         disk_list_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
         disk_list_header.pack_start (start_window_controls);
+        disk_list_header.pack_end (end_window_controls);
         disk_list_header.pack_end (refresh_button);
 
         disk_list_placeholder = new Granite.Placeholder (_("No disk found")) {
@@ -36,7 +39,7 @@ public class EspaceLibre.DisksView : Granite.Bin {
         };
 
         var selection_model = new Gtk.SingleSelection (disks_manager.disks) {
-            autoselect = true
+            autoselect = false
         };
         selection_model.items_changed.connect (disks_manager.on_items_changed);
 
@@ -45,15 +48,22 @@ public class EspaceLibre.DisksView : Granite.Bin {
         factory.setup.connect ((obj) => {
             var list_item = (Gtk.ListItem) obj;
             list_item.child = new DiskRow (labels_size_group);
+            if (!disks_manager.has_items) {
+                warning ("no items. selected: %u", selection_model.selected);
+                disks_manager.current_disk = (DiskEntry)selection_model.selected_item;
+            }
         });
 
         factory.bind.connect ((obj) => {
             var list_item = (Gtk.ListItem) obj;
-            ((DiskRow) list_item.child).partition_object = (DiskEntry) list_item.item;
+            var row = (DiskRow) list_item.child;
+            // Do not bind again, values do not update, entries are removed and recreated
+            if (row.partition_object == null) {
+                row.partition_object = (DiskEntry) list_item.item;
+            }
         });
 
         disks_listview = new Gtk.ListView (selection_model, factory) {
-            single_click_activate = true,
             hexpand = true,
             vexpand = true
         };
@@ -86,13 +96,15 @@ public class EspaceLibre.DisksView : Granite.Bin {
 
         child = disk_list_handle;
 
+        /* SIGNALS */
+
         disks_manager.disks.items_changed.connect (() => {
             if (disks_manager.has_items) {
                 disks_stack.visible_child = scrolled;
                 return;
             }
 
-            warning("disks attribute is null/empty");
+            info("disks attribute is null/empty");
             disks_stack.visible_child = disk_list_placeholder;
         });
 
@@ -104,8 +116,33 @@ public class EspaceLibre.DisksView : Granite.Bin {
             error_toast.send_notification ();
         });
 
-        disks_listview.activate.connect ((index) => {
-            disks_manager.current_disk = (DiskEntry) selection_model.get_item (index);
+        selection_model.selection_changed.connect (() => {
+            warning("selection_changed");
+
+            if (selection_model.get_selected_item () != null) {
+                disk_list_header.remove (end_window_controls);
+            } else {
+                disk_list_header.pack_end (end_window_controls);
+            }
+
+            //  bool before = disks_manager.has_items;
+            //  if (disks_manager.has_items) {
+            //      if (!before) {
+            //          warning("had no items, but now has some");
+            //          disks_manager.current_disk = (DiskEntry) disks_manager.disks.get_item (0);
+            //      } else {
+            //          warning("still some items");
+            //      }
+            //  } else {
+            //      if (before) {
+            //          warning("no more items");
+            //          disks_manager.current_disk = null;
+            //      } else {
+            //          warning("still no items");
+            //      }
+            //  }
+
+            disks_manager.current_disk = (DiskEntry)selection_model.selected_item;
         });
     }
 }

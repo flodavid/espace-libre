@@ -12,11 +12,11 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
         set {
             if (_partition_object != null) {
-                _partition_object.notify["mount-point"].disconnect (update_mount_point);
-                _partition_object.notify["name"].disconnect (update_disk_label);
+                _partition_object.notify["fs-type"].disconnect (update_fs_type);
                 _partition_object.notify["kb-size"].disconnect (update_sizes);
+                _partition_object.notify["kb-used"].disconnect (update_sizes);
                 _partition_object.notify["kb-avail"].disconnect (update_sizes);
-                _partition_object.notify["texture"].disconnect (update_cover_art);
+                _partition_object.notify["device-type"].disconnect (update_cover_art);
             }
 
             _partition_object = value;
@@ -26,12 +26,11 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             }
 
             update_all ();
-            update_cover_art ();
-            _partition_object.notify["mount-point"].connect (update_mount_point);
-            _partition_object.notify["name"].connect (update_disk_label);
+            _partition_object.notify["fs-type"].connect (update_fs_type);
             _partition_object.notify["kb-size"].connect (update_sizes);
+            _partition_object.notify["kb-used"].connect (update_sizes);
             _partition_object.notify["kb-avail"].connect (update_sizes);
-            _partition_object.notify["texture"].connect (update_cover_art);
+            _partition_object.notify["device-type"].connect (update_cover_art);
         }
     }
 
@@ -59,14 +58,14 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         };
 
         disk_label = new Gtk.Label (null) {
-            ellipsize = Pango.EllipsizeMode.MIDDLE,
+            ellipsize = Pango.EllipsizeMode.START,
             hexpand = false,
             xalign = 0
         };
         labels_size_group.add_widget (disk_label);
 
         mount_point = new Gtk.Label (null) {
-            ellipsize = Pango.EllipsizeMode.MIDDLE,
+            ellipsize = Pango.EllipsizeMode.START,
             hexpand = false,
             xalign = 0
         };
@@ -96,21 +95,17 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         update_sizes ();
     }
 
-    private void update_disk_label () {
-        disk_label.label = _partition_object.name;
-    }
-
-    private void update_mount_point () {
-        mount_point.label = _partition_object.mount_point;
-    }
-
-    private void update_cover_art () {
-        disk_image.image.paintable = _partition_object.texture;
-    }
-
     private void update_sizes () {
         space_bar.space_size = _partition_object.kb_size;
         space_bar.free_space = _partition_object.kb_avail;
         space_bar.used_space = _partition_object.kb_used;
+    }
+
+    private void update_cover_art () {
+        disk_image.image.paintable = _partition_object.get_texture ();
+    }
+
+    private void update_fs_type () {
+        warning ("FS type of %s is %s", _partition_object.name, _partition_object.fs_type);
     }
 }
