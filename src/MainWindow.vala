@@ -13,6 +13,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
     construct {
         // disks_view and selected_disk_view must be created before reading fstab and df command
         disks_view = new DisksView ();
+        disks_manager = DisksManager.get_default ();
 
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 
@@ -24,7 +25,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         end_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
         end_header.pack_end (end_window_controls);
 
-        var now_playing_view = new SelectedDiskView () {
+        var selected_disk_view = new SelectedDiskView () {
             margin_top = 12,
             margin_end = 12,
             margin_bottom = 24,
@@ -32,21 +33,33 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
             vexpand = true
         };
 
-        var now_playing = new Gtk.Box (VERTICAL, 0);
-        now_playing.append (end_header);
-        now_playing.append (now_playing_view);
+        var selected_disk = new Gtk.Box (VERTICAL, 0);
+        selected_disk.append (end_header);
+        selected_disk.append (selected_disk_view);
 
-        var now_playing_handle = new Gtk.WindowHandle () {
-            child = now_playing
+        var selected_disk_handle = new Gtk.WindowHandle () {
+            child = selected_disk
+        };
+        var selected_disk_revealer = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
+            child = selected_disk_handle
         };
 
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             start_child = disks_view,
-            end_child = now_playing_handle,
             resize_end_child = false,
             shrink_end_child = false,
             shrink_start_child = false
         };
+        disks_manager.notify["current-disk"].connect (() => {
+            if (disks_manager.current_disk != null) {
+                paned.end_child = selected_disk_revealer;
+                selected_disk_revealer.reveal_child = true;
+            } else {
+                paned.end_child = null;
+                selected_disk_revealer.reveal_child = false;
+            }
+        });
 
         child = paned;
 
@@ -59,7 +72,6 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
-        disks_manager = DisksManager.get_default ();
         disks_manager.readFSTAB ();
         disks_manager.readDF ();
     }

@@ -6,56 +6,58 @@
 public class EspaceLibre.SelectedDiskView : Gtk.Box {
     construct {
         var disk_label = new Gtk.Label (_("Disk")) {
-            ellipsize = Pango.EllipsizeMode.MIDDLE
+            ellipsize = Pango.EllipsizeMode.START
         };
         disk_label.add_css_class (Granite.STYLE_CLASS_H3_LABEL);
 
+        var partition_name = new Gtk.Label (_("Partition")) {
+            justify = Gtk.Justification.LEFT,
+            halign = Gtk.Align.START
+        };
+
         var mount_point = new Gtk.Label (_("Not mounted")) {
-            ellipsize = Pango.EllipsizeMode.MIDDLE
+            justify = Gtk.Justification.LEFT,
+            halign = Gtk.Align.START,
+            ellipsize = Pango.EllipsizeMode.START
         };
 
-        var mount_point_revealer = new Gtk.Revealer () {
-            child = mount_point
+        var file_system_format = new Gtk.Label (_("Unknown FS")) {
+            justify = Gtk.Justification.LEFT,
+            halign = Gtk.Align.START,
+            ellipsize = Pango.EllipsizeMode.START
         };
 
-        var info_grid = new Gtk.Grid () {
-            halign = Gtk.Align.CENTER
+        var device_type = new Gtk.Label (_("Device type")) {
+            justify = Gtk.Justification.LEFT,
+            halign = Gtk.Align.START
         };
-        info_grid.attach (disk_label, 0, 0);
-        info_grid.attach (mount_point_revealer, 0, 1);
-
-        var used_bar = new EspaceLibre.UsedSpaceBar ();
-
-        var grid = new Gtk.Grid () {
-            column_spacing = 12,
-            row_spacing = 24,
-            valign = Gtk.Align.START,
-            vexpand = true
-        };
-        grid.attach (info_grid, 0, 1, 3);
-        grid.attach (used_bar, 0, 2, 3);
 
         orientation = Gtk.Orientation.VERTICAL;
-        spacing = 24;
-        append (grid);
+        spacing = 12;
+        append (disk_label);
+        append (partition_name);
+        append (mount_point);
+        append (file_system_format);
+        append (device_type);
 
-        var playback_manager = DisksManager.get_default ();
+        var disks_manager = DisksManager.get_default ();
 
-        playback_manager.notify["current-audio"].connect (() => {
-            if (playback_manager.current_disk != null) {
-                playback_manager.current_disk.bind_property ("mount-point", mount_point, "label", BindingFlags.SYNC_CREATE);
-                playback_manager.current_disk.bind_property ("name", disk_label, "label", BindingFlags.SYNC_CREATE);
-                playback_manager.current_disk.bind_property ("duration", used_bar, "playback-duration", BindingFlags.SYNC_CREATE);
+        disks_manager.notify["current-disk"].connect (() => {
+            debug ("selected disk changed");
+            if (disks_manager.current_disk != null) {
+                if (disks_manager.current_disk.file_system != disks_manager.current_disk.name) {
+                    partition_name.label = disks_manager.current_disk.file_system;
+                } else {
+                    partition_name.label = "";
+                }
+                disk_label.label = disks_manager.current_disk.name;
+                mount_point.label = disks_manager.current_disk.mount_point;
+                file_system_format.label = _("Format: ") + disks_manager.current_disk.fs_type;
+                device_type.label = disks_manager.current_disk.device_type.device_type_name ();
             } else {
-                mount_point.label = _("Not mounted");
+                partition_name.label = _("Not mounted");
                 disk_label.label = _("Disk");
-                used_bar.space_size = 0;
-                used_bar.used_space = 0;
             }
-        });
-
-        mount_point.notify["label"].connect (() => {
-            mount_point_revealer.reveal_child = mount_point.label != "";
         });
     }
 }
