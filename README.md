@@ -1,5 +1,7 @@
 # EspaceLibre
 
+This is an alternative to KDiskFree, using Gnome's GTK and elementaryOS' Granite frameworks.
+
 ![Screenshot](data/screenshot.png?raw=true)
 
 ## Building, Testing, and Installation
@@ -11,9 +13,10 @@ You'll need the following dependencies:
 * meson
 * valac
 
-It's recommended to create a clean build environment. Run `meson` to configure the build environment and then `ninja` to build
+It's recommended to create a clean build environment.
+Run `meson` to configure the build environment and then `ninja` to build
 
-    meson build --prefix=/usr
+    meson setup "build" --prefix=/usr
     cd build
     ninja
 

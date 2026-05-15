@@ -42,7 +42,15 @@ public class EspaceLibre.DisksManager : Object {
      */
     public void readFSTAB () {
         string fstab_content;
-        FileUtils.get_contents ("/etc/fstab", out fstab_content);
+        
+        try {
+            FileUtils.get_contents ("/run/host/etc/fstab", out fstab_content);
+        } catch (FileError err) {
+            fstab_content = null;
+        }
+        if (fstab_content == null || fstab_content == "") {
+            FileUtils.get_contents ("/etc/fstab", out fstab_content);
+        }
 
         if (fstab_content != null && fstab_content != "") {
             string[] lines = fstab_content.split ("\n");
