@@ -6,7 +6,7 @@
 
 You'll need the following dependencies:
 * libadwaita-1 >=1.4.0
-* granite-7 >=7.6.0
+* granite-7 >=7.7.0
 * gtk4
 * meson
 * valac

@@ -3,49 +3,25 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-album {
-    background-image:
-        linear-gradient(
-            170deg,
-            alpha(
-                @highlight_color,
-                0.1
-            ),
-            alpha(
-                @highlight_color,
-                0.15
-            ) 43%,
-            alpha(
-                @highlight_color,
-                0
-            ) 44%
-        ),
-        -gtk-icontheme("drive-harddisk-symbolic"),
-        linear-gradient(
-            to bottom,
-            @base_color,
-            @base_color
-        );
-    background-size: cover, 50%, cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    color: alpha(@insensitive_fg_color, 0.75);
-}
-
-levelbar empty {
+levelbar.colored_bar empty {
   background-color: @accent_color;
 }
-
-levelbar block.low {
+levelbar.colored_bar block.low  {
   background-color: @accent_color;
 }
-
 levelbar block.high {
   background-color: orange;
 }
-
 levelbar block.full {
   background-color: orangered;
+}
+
+/* Fallback to default color if the accent color is too close to orange/red */
+levelbar empty {
+  background-color: lightskyblue;
+}
+levelbar block.low  {
+  background-color: lightskyblue;
 }
 
 .italic_text {

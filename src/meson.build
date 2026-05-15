@@ -5,10 +5,9 @@ sources = [
     'DisksManager.vala',
     'Views/SelectedDiskView.vala',
     'Views/DisksView.vala',
-    'Widgets/DiskImage.vala',
+    'Widgets/DiskRow.vala',
     'Widgets/MountPointRow.vala',
     'Widgets/UsedSpaceBar.vala',
-    'Widgets/DiskRow.vala',
 ]
 
 executable(

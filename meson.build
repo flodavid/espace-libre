@@ -20,7 +20,7 @@ config_file = configure_file(
 )
 
 adw_dep = dependency('libadwaita-1', version: '>=1.4.0')
-granite_dep = dependency('granite-7', version: '>=7.6.0') # Granite.Bin
+granite_dep = dependency('granite-7', version: '>=7.7.0') # Granite.Bin
 gtk_dep = dependency('gtk4')
 
 dependencies = [
