@@ -15,6 +15,7 @@ public class EspaceLibre.DiskEntry : Object {
     public string name { get; set; }
     public string uuid { get; set; }
     public bool mounted { get; set; }
+    public DEVICE_TYPE device_type { get; set; }
     public uint64 kb_size { get; set; default = 0; }
     public uint64 kb_used { get; set; default = 0; }
     public uint64 kb_avail { get; set; default = 0; }
@@ -29,5 +30,27 @@ public class EspaceLibre.DiskEntry : Object {
     construct {
         name = file_system;
         mounted = false;
+        device_type = UNKNOWN;
+    }
+}
+
+public enum DEVICE_TYPE {
+    UNKNOWN, HDD, SSD, NVME, USB_DRIVE, OPTICAL;
+
+    public string device_type_name () {
+        switch (this) {
+            case HDD:
+                return _("Hard Drive Disk");
+            case USB_DRIVE:
+                return _("USB Drive");
+            case OPTICAL:
+                return _("Optical Disc");
+            case NVME:
+                return _("NVMe Solid State Drive");
+            case SSD:
+                return _("Solid State Drive");
+            default:
+                return _("Unknown type");
+            }
     }
 }

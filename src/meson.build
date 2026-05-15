@@ -6,6 +6,7 @@ sources = [
     'Views/SelectedDiskView.vala',
     'Views/DisksView.vala',
     'Widgets/DiskImage.vala',
+    'Widgets/MountPointRow.vala',
     'Widgets/UsedSpaceBar.vala',
     'Widgets/DiskRow.vala',
 ]

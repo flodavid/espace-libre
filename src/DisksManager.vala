@@ -27,6 +27,7 @@ public class EspaceLibre.DisksManager : Object {
 
     construct {
         readingDFStdErrOut = false;
+        has_items = false;
         disks = new ListStore (typeof (DiskEntry));
 
         disks.items_changed.connect (on_items_changed);
@@ -46,11 +47,10 @@ public class EspaceLibre.DisksManager : Object {
         if (fstab_content != null && fstab_content != "") {
             string[] lines = fstab_content.split ("\n");
             foreach (string line in lines) {
-                warning("GOT: [%s]", line);
-
-                line = line._strip ();
+                line = line.strip ();
                 // Treat lines not empty or commented out by '#'
                 if (line.length > 0 && line.get_char(0) != '#') {
+                    info("GOT: [%s]", line);
 
                     var columns = string_to_array (line);
 
@@ -126,8 +126,8 @@ public class EspaceLibre.DisksManager : Object {
         string[] df = {"df", "-kT"};
         string[] spawn_env =
             {"LANG=en_US", "LC_ALL=en_US", "LC_MESSAGES=en_US", "LC_TYPE=en_US","LANGUAGE=en_US", "LC_ALL=POSIX"};
-        string fstab_output;
-        GLib.Process.spawn_sync ("/", df, spawn_env, SpawnFlags.SEARCH_PATH, null, out fstab_output);
+        string df_output;
+        GLib.Process.spawn_sync ("/", df, spawn_env, SpawnFlags.SEARCH_PATH, null, out df_output);
 
         readingDFStdErrOut = true;
 
@@ -137,7 +137,7 @@ public class EspaceLibre.DisksManager : Object {
             disk.mounted = false; // set all disks unmounted
         }
 
-        string[] lines = fstab_output.split ("\n");
+        string[] lines = df_output.split ("\n");
 
         int line_idx = 0;
         for (;line_idx < lines.length; ++line_idx) {
@@ -148,10 +148,10 @@ public class EspaceLibre.DisksManager : Object {
             }
         }
         if (line_idx >= lines.length) {
-            error("Error running df command... got [%s]", fstab_output);
+            error("Error running df command... got [%s]", df_output);
         }
 
-        warning ("check df non header lines to find their size");
+        debug ("reading df non header lines to find their size");
         for (;line_idx < lines.length; ++line_idx) {
             var line = lines[line_idx]._strip ();
             if (line.length != 0) {
@@ -177,7 +177,27 @@ public class EspaceLibre.DisksManager : Object {
                             var current_disk = (DiskEntry) disks.get_item (i);
                             if (current_disk.file_system == device_name && current_disk.mount_point == mount_point) {
                                 disk = current_disk;
-                                debug ("found disk: %s", disk.file_system);
+
+                                string disk_partition = disk.file_system.split ("/")[2];
+                                if (disk_partition.has_prefix ("nvme")) {
+                                    debug ("disk [%s] is on NVMe Drive", disk_partition);
+                                    disk.device_type = NVME;                                    
+                                } else {
+                                    string disk_device = disk_partition.substring (0, 3);
+                                    int device_rotational = getRotational (disk_device);
+                                    
+                                    if (device_rotational == 1) {
+                                        debug ("disk [%s] is on HDD", disk_partition);
+                                        disk.device_type = HDD;
+                                    } else {
+                                        if (device_rotational == 0) {
+                                            debug ("disk [%s] is on SSD", disk_partition);
+                                            disk.device_type = SSD;
+                                        } else {
+                                            debug ("disk [%s] device type is unknown", disk_partition);
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -215,11 +235,24 @@ public class EspaceLibre.DisksManager : Object {
     }
 
     public void on_items_changed () {
+        //  bool before = has_items;
         has_items = disks != null && disks.n_items > 0;
-    }
 
-    private void on_selected_disk_changed () {
-        // TODO implement select disk change
+        //  if (has_items) {
+        //      if (!before) {
+        //          warning("had no items, but now has some");
+        //          current_disk = (DiskEntry) disks.get_item (0);
+        //      } else {
+        //          warning("still some items");
+        //      }
+        //  } else {
+        //      if (before) {
+        //          warning("no more items");
+        //          current_disk = null;
+        //      } else {
+        //          warning("still no items");
+        //      }
+        //  }
     }
 
     /**
@@ -254,5 +287,28 @@ public class EspaceLibre.DisksManager : Object {
      */
     private static bool is_real_disk (string device_name, string fs_type, string mount_point) {
         return is_real_disk_and_has_space("", device_name, fs_type, mount_point);
+    }
+
+    /**
+     * reads the cat-command result for the given device name
+     */
+    private int getRotational (string device_name) {
+        debug ("getRotational of %s", device_name);
+
+        string[] cat = {"cat", "/sys/block/" + device_name + "/queue/rotational"};
+        string[] spawn_env = { };
+        string cat_output;
+        string cat_error;
+        GLib.Process.spawn_sync ("/", cat, spawn_env, SpawnFlags.SEARCH_PATH, null, out cat_output, out cat_error);
+        cat_output = cat_output.strip ();
+
+        if (cat_output == "0") {
+            return 0;
+        } else if (cat_output == "1") {
+            return 1;
+        } else {
+            warning ("Failed to check if the disk device is an HDD:\n\t%s\n%s", cat_output, cat_error);
+            return -1;
+        }
     }
 }

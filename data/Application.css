@@ -47,3 +47,11 @@ levelbar block.high {
 levelbar block.full {
   background-color: orangered;
 }
+
+.italic_text {
+  font-style: italic;
+}
+/* Do no change visited mount point link color */
+mountPointRow .link:visited  {
+  opacity: 1;
+}
