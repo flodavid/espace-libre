@@ -1,8 +1,10 @@
 sources = [
     'Application.vala',
-    'DiskEntry.vala',
+    'FstabVolume.vala',
+    'GenericVolume.vala',
+    'VolumeEntry.vala',
     'MainWindow.vala',
-    'DisksManager.vala',
+    'VolumesManager.vala',
     'Views/SelectedDiskView.vala',
     'Views/DisksView.vala',
     'Widgets/DiskRow.vala',

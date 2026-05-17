@@ -81,18 +81,18 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         append (mount_info);
         append (unmount_eject_working_stack);
 
-        var disks_manager = DisksManager.get_default ();
+        var volumes_manager = VolumesManager.get_default ();
 
-        disks_manager.notify["current-disk"].connect (() => {
+        volumes_manager.notify["current-volume"].connect (() => {
             debug ("selected disk changed");
-            if (disks_manager.current_disk != null) {
-                partition_label.subtitle = disks_manager.current_disk.label != null
-                    ? disks_manager.current_disk.label
+            if (volumes_manager.current_volume != null) {
+                partition_label.subtitle = volumes_manager.current_volume.get_name () != null
+                    ? volumes_manager.current_volume.get_name ()
                     : "<i>None</i>";
-                partition_identifier.subtitle = disks_manager.current_disk.file_system;
-                file_system_format.subtitle = disks_manager.current_disk.fs_type;
-                DeviceType.subtitle = disks_manager.current_disk.device_type.device_type_name ();
-                mount_info.update_mount_point (disks_manager.current_disk.mount_point);
+                partition_identifier.subtitle = volumes_manager.current_volume.get_identifier ("unix-device");
+                file_system_format.subtitle = volumes_manager.current_volume.get_fs_type ();
+                DeviceType.subtitle = volumes_manager.current_volume.get_device_type_name ();
+                mount_info.update_mount_point (volumes_manager.current_volume.get_mount ().get_root ().get_path ());
             } else {
                 partition_identifier.subtitle = _("Not mounted");
             }

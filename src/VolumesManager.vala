@@ -3,44 +3,43 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-public class EspaceLibre.DisksManager : Object {
-    public static unowned DisksManager get_default () {
-        return instance.once (() => { return new DisksManager (); });
+public class EspaceLibre.VolumesManager : Object {
+    public static unowned VolumesManager get_default () {
+        return instance.once (() => { return new VolumesManager (); });
     }
 
-    public DiskEntry? current_disk { get; set; default = null; }
-    public ListStore disks { get; private set; }
-    public bool has_items { get; private set; }
-    public uint n_items {
-        get {
-            return disks != null ? disks.n_items : 0;
-        }
-    }
-
+    public VolumeEntry? current_volume { get; set; default = null; }
+    public unowned GLib.List<VolumeEntry> volumes { get; private set; }
+    
     public signal void invalids_found (int count);
+    public signal void items_changed ();
 
     private static string BLANK = " ";
-    private static GLib.Once<DisksManager> instance;
+    private static GLib.Once<VolumesManager> instance;
 
     private bool reading_df_stderr_out;
-    private DisksManager () {}
+    private VolumesManager () {}
 
     construct {
         reading_df_stderr_out = false;
-        has_items = false;
-        disks = new ListStore (typeof (DiskEntry));
+        volumes = new GLib.List<VolumeEntry> ();
 
-        disks.items_changed.connect (on_items_changed);
+        //  volumes.items_changed.connect (on_items_changed);
     }
 
-    public void show_disk (DiskEntry disk) {
-        disks.append (disk);
+    //  public void show_volume (VolumeEntry volume) {
+    //      print ("show_volume: %s\n", volume.get_name ());
+    //      volumes.append (volume);
+    //  }
+
+    public bool has_items () {
+        return volumes.length () > 0;
     }
 
     /**
      * tries to figure out the possibly mounted fs
      */
-    public void read_fstab () {
+    public void add_volumes_from_FSTAB () {
         string fstab_content;
         
         try {
@@ -103,14 +102,15 @@ public class EspaceLibre.DisksManager : Object {
 
                         if (is_real_disk (file_system, columns[2], columns[1])) {
                             debug ("Partition identifier: [%s]", file_system);
-                            var disk =
-                                new DiskEntry (file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
-                            disk.uuid = uuid;
+                            var fs_volume = new FstabVolume (
+                                file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
+                            fs_volume.uuid = uuid;
                             if (label != null) {
-                                disk.label = label;
+                                fs_volume.label = label;
                             }
 
-                            disks.append (disk);
+                            print ("add volume: %s\n", fs_volume.get_name ());
+                            volumes.append (fs_volume);
                         } else {
                             warning ("Partition [%s] is not 'real', do not add it", file_system);
                         }
@@ -118,34 +118,54 @@ public class EspaceLibre.DisksManager : Object {
                 }
             }
         }
+
+        items_changed ();
     }
 
-
     /**
-     * Alternative to readDf using VolumeMonitor. Could also be an alternative to readFSTAB.
-     * All functionalities are not supported as system partitions are not reported as volumes
+     * Get the non-system mounted volumes
      */
+    public void add_volumes_from_volume_monitor () {
+        var volume_infos = VolumeMonitor.@get ().get_volumes ();
+        if (volume_infos != null) {
+            Volume volume = null;
+            foreach (var volume_info in volume_infos) {
+                warning ("adding %s", volume_info.get_name ());
+                var device_type = partition_rotational_type (
+                    volume_info.get_name (), volume_info.get_identifier ("unix-device").substring (5, 3));
+                volumes.append(new GenericVolume(volume_info, device_type));
+            }
+        }
+
+        items_changed ();
+    }
+
+    //  /**
+    //   * Alternative to readDf using VolumeMonitor. Could also be an alternative to readFSTAB.
+    //   * All functionalities are not supported as system partitions are not reported as volumes
+    //   */
     public void read_volumes () {
         //  GLib.Environment.get_system_data_dirs. // TODO use it ?
 
-        DiskEntry disk;
-        for (uint i = disks.get_n_items (); i --> 0; ) {
-            disk = (DiskEntry) disks.get_item (i);
-            disk.mounted = true; // set all disks as mounted
-        }
-        uint i = disks.n_items;
-        for (; i --> 0;) {
-            disk = (DiskEntry) disks.get_item (i);
-            add_disk_info_from_volumes (disk);
+        //  Volume volume;
+        //  for (uint i = volumes.get_n_items (); i --> 0; ) {
+        //      volume = (Volume) volumes.get_item (i);
+        //      volume.mounted = true; // set all volumes as mounted
+        //  }
+        foreach (var entry in volumes) {
+            var fs_volume = (FstabVolume) entry;
+            if (fs_volume != null) {
+                add_volume_info (fs_volume);
+            }
         }
     }
 
-    private void add_disk_info_from_volumes (DiskEntry disk) {
-        var volumes = VolumeMonitor.@get ().get_volumes ();
-        if (volumes != null) {
+    private void add_volume_info (FstabVolume fstab_entry) {
+        var volume_infos = VolumeMonitor.@get ().get_volumes ();
+        if (volume_infos != null) {
             Volume volume = null;
             GLib.FileInfo info = null;
-            for (unowned List<Volume>? volume_elem = volumes.first ();
+            for (unowned List<Volume>? volume_elem = volume_infos.first ();
                     volume_elem != null && info == null;
                     volume_elem = volume_elem.next)
             {
@@ -154,7 +174,7 @@ public class EspaceLibre.DisksManager : Object {
                 print ("volume %s. ID: %s. Label: %s\n",
                     volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
 
-                if (disk.file_system == volume.get_identifier ("unix-device"))
+                if (fstab_entry.file_system == volume.get_identifier ("unix-device"))
                 {
                     print ("found volume %s. ID: %s. Label: %s\n",
                         volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
@@ -163,7 +183,7 @@ public class EspaceLibre.DisksManager : Object {
                         if (volume.get_mount () != null) {
                             info = volume.get_mount ().get_root ().query_filesystem_info ("filesystem::*");
                         } else {
-                            current_disk.mounted = false;
+                            //  current_volume.mounted = false; // TODO fix or remove
                             debug ("%s is not mounted", volume.get_name ());
                             info = volume.get_activation_root ().query_filesystem_info ("filesystem::*");
                         }
@@ -178,31 +198,32 @@ public class EspaceLibre.DisksManager : Object {
             }
 
 
-            // Partition disks are not listed as volume, but they are mounted
-            if (info == null && disk.mounted == true) {
-                debug ("no volume found for a mounted disk, it must be a system partition");
+            // System volumes are not listed, but they are mounted
+            if (info == null && fstab_entry.mounted == true) {
+                debug ("no volume found for a mounted volume, it must be a system partition");
                 volume = null;
-                info = File.new_for_path(disk.mount_point).query_filesystem_info ("filesystem::*");
-                disk.mounted = false;
-                //  disk.is_system = true; // TODO différencier monté et partition systène
+                info = File.new_for_path(fstab_entry.mount_point).query_filesystem_info ("filesystem::*");
+                fstab_entry.mounted = false;
+                //  fstab_entry.is_system = true; // TODO différencier monté et partition systène
             }
 
             if (volume != null) {
-                disk.device_type = partition_rotational_type (
+                fstab_entry.device_type = partition_rotational_type (
                     volume.get_name (), volume.get_identifier ("unix-device").substring (5, 3));
             }
 
+            // TODO rework using VolumeEntry methods
             if (info != null) {
                 if (info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
-                    disk.kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
+                    fstab_entry.kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
                 }
                 if (info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
-                    disk.kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
+                    fstab_entry.kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
                 }
-                if ((disk.fs_type == "auto" || disk.fs_type == "fuse")
+                if ((fstab_entry.fs_type == "auto" || fstab_entry.fs_type == "fuse")
                     && info.has_attribute (FileAttribute.FILESYSTEM_TYPE))
                 {
-                    disk.fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
+                    fstab_entry.fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
                 }
             }
         }
@@ -227,10 +248,12 @@ public class EspaceLibre.DisksManager : Object {
 
         reading_df_stderr_out = true;
 
-        DiskEntry disk;
-        for (uint i = disks.get_n_items (); i --> 0; ) {
-            disk = (DiskEntry) disks.get_item (i);
-            disk.mounted = false; // set all disks unmounted
+        FstabVolume fs_volume;
+        foreach (var entry in volumes) {
+            fs_volume = (FstabVolume) entry;
+            if (fs_volume != null) {
+                fs_volume.mounted = false; // set all volumes unmounted
+            }
         }
 
         string[] lines = df_output.split ("\n");
@@ -268,24 +291,29 @@ public class EspaceLibre.DisksManager : Object {
 
                     // Exclude virtual filesystems
                     if (is_real_disk_and_has_space (kb_size, device_name, fs_type, mount_point)) {
-                        disk = null;
-                        for (var i = 0; i < disks.n_items && disk == null; ++i) {
-                            var current_disk = (DiskEntry) disks.get_item (i);
-                            if (current_disk.file_system == device_name && current_disk.mount_point == mount_point) {
-                                disk = current_disk;
+                        fs_volume = null;
+                        // TODO use iterator
+                        for (var i = 0; i < volumes.length () && fs_volume == null; ++i) {
+                            var current_volume = (FstabVolume) volumes.nth_data (i);
+                            if (fs_volume == null) {
+                                continue;
+                            }
 
-                                string disk_partition = disk.file_system.split ("/")[2];
-                                disk.device_type = partition_rotational_type (disk_partition, disk_partition.substring (0, 3));
+                            if (current_volume.file_system == device_name && current_volume.mount_point == mount_point) {
+                                fs_volume = current_volume;
+
+                                string disk_partition = fs_volume.file_system.split ("/")[2];
+                                fs_volume.device_type = partition_rotational_type (disk_partition, disk_partition.substring (0, 3));
                             }
                         }
 
-                        if (disk != null) {
-                            disk.fs_type = fs_type;
-                            disk.kb_size = uint64.parse (kb_size);
-                            disk.kb_used = uint64.parse (words[3]);
-                            disk.kb_avail = uint64.parse (words[4]);
+                        if (fs_volume != null) {
+                            fs_volume.fs_type = fs_type;
+                            fs_volume.kb_size = uint64.parse (kb_size);
+                            fs_volume.kb_used = uint64.parse (words[3]);
+                            fs_volume.kb_avail = uint64.parse (words[4]);
                             //  disk.avail_percent = words[5]; // can be calculated
-                            disk.mounted = true; // it is now mounted (df lists only mounted)
+                            fs_volume.mounted = true; // it is now mounted (df lists only mounted)
                         }
                     }
                 } else {
@@ -300,26 +328,25 @@ public class EspaceLibre.DisksManager : Object {
 
     // TODO add periodic refresh with "read_df ()"
     public void refresh () {
-        info ("Remove and rescan disks");
+        info ("Remove and rescan volumes");
 
-        while (disks.n_items > 0) {
-            disks.remove (0);
-        }
+        volumes = new GLib.List<VolumeEntry> ();
 
-        read_fstab ();
-        read_df ();
+        add_volumes_from_volume_monitor ();
+
+        //  add_volumes_from_FSTAB ();
+        //  read_df ();
         //  read_volumes ();
         on_items_changed ();
     }
 
     public void on_items_changed () {
         //  bool before = has_items;
-        has_items = disks != null && disks.n_items > 0;
 
         //  if (has_items) {
         //      if (!before) {
         //          warning("had no items, but now has some");
-        //          current_disk = (DiskEntry) disks.get_item (0);
+        //          current_disk = (DiskEntry) volumes.get_item (0);
         //      } else {
         //          warning("still some items");
         //      }

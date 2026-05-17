@@ -8,12 +8,12 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
     public const string ACTION_OPEN = "action-open";
 
     private DisksView disks_view;
-    private DisksManager disks_manager;
+    private VolumesManager volumes_manager;
 
     construct {
         // disks_view and selected_disk_view must be created before reading fstab and df command
         disks_view = new DisksView ();
-        disks_manager = DisksManager.get_default ();
+        volumes_manager = VolumesManager.get_default ();
 
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 
@@ -51,8 +51,8 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
             shrink_end_child = false,
             shrink_start_child = false
         };
-        disks_manager.notify["current-disk"].connect (() => {
-            if (disks_manager.current_disk != null) {
+        volumes_manager.notify["current-volume"].connect (() => {
+            if (volumes_manager.current_volume != null) {
                 paned.end_child = selected_disk_revealer;
                 selected_disk_revealer.reveal_child = true;
             } else {
@@ -72,13 +72,15 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
-        disks_manager.read_fstab ();
-        disks_manager.read_df ();
-        //  disks_manager.read_volumes ();
+        volumes_manager.add_volumes_from_volume_monitor ();
+
+        //  volumes_manager.add_volumes_from_FSTAB ();
+        //  volumes_manager.read_df ();
+        //  volumes_manager.read_volumes ();
     }
 
     public void start_refresh () {
-        disks_manager.refresh ();
+        volumes_manager.refresh ();
     }
 
 }

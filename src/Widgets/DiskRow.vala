@@ -4,8 +4,8 @@
  */
 
 public class EspaceLibre.DiskRow : Granite.Bin {
-    private DiskEntry _partition_object = null;
-    public DiskEntry partition_object {
+    private VolumeEntry _partition_object = null;
+    public VolumeEntry partition_object {
         get {
             return _partition_object;
         }
@@ -38,10 +38,9 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     private Gtk.Label disk_label;
     private Gtk.Image disk_image;
     private EspaceLibre.UsedSpaceBar space_bar;
-    private Gtk.SizeGroup labels_size_group;
 
-    public DiskRow (Gtk.SizeGroup _labels_size_group) {
-        labels_size_group = _labels_size_group;
+    public DiskRow (Gtk.SizeGroup labels_size_group) {
+        labels_size_group = labels_size_group;
 
         disk_image = new Gtk.Image ();
         disk_image.height_request = 38;
@@ -65,6 +64,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         };
         mount_point.add_css_class (Granite.CssClass.DIM);
         mount_point.add_css_class (Granite.CssClass.SMALL);
+        labels_size_group.add_widget (mount_point);
 
         space_bar = new UsedSpaceBar ();
 
@@ -84,25 +84,28 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_all () {
-        disk_label.label = _partition_object.label;
-        disk_label.label = _partition_object.label != null ? _partition_object.label : _partition_object.file_system;
-        mount_point.label = _partition_object.mount_point;
+        disk_label.label = _partition_object.get_name () != null
+            ? _partition_object.get_name () : _partition_object.get_identifier ("unix-device");
+        mount_point.label = _partition_object.get_mount ().get_root ().get_path ();
         // TODO make something not hardcoded to detect system partitions
-        space_bar.is_system = _partition_object.mount_point == "/" || _partition_object.mount_point == "/home";
+        //  space_bar.is_system = _partition_object.mount_point == "/" || _partition_object.mount_point == "/home";
         update_sizes ();
     }
 
     private void update_sizes () {
-        space_bar.space_size = _partition_object.kb_size;
-        space_bar.free_space = _partition_object.kb_avail;
-        space_bar.used_space = _partition_object.kb_used;
+        space_bar.space_size = _partition_object.get_kb_size ();
+        space_bar.free_space = _partition_object.get_kb_avail ();
+        space_bar.used_space = _partition_object.get_kb_used ();
     }
 
     private void update_cover_art () {
-        disk_image.paintable = _partition_object.get_texture ();
+        var fs_volume = (FstabVolume) _partition_object;
+        if (fs_volume != null) {
+            disk_image.paintable = fs_volume.get_texture ();
+        }
     }
 
     private void update_fs_type (Object self, GLib.ParamSpec spec) {
-        warning ("update FS type of %s to: %s", _partition_object.file_system, _partition_object.fs_type);
+        print ("update FS type of %s to: %s\n", _partition_object.get_name (), _partition_object.get_fs_type ());
     }
 }

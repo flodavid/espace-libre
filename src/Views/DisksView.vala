@@ -11,10 +11,10 @@ public class EspaceLibre.DisksView : Granite.Bin {
     private Gtk.ScrolledWindow scrolled;
     private Gtk.SignalListItemFactory factory;
     private Gtk.Stack disks_stack;
-    private DisksManager disks_manager;
+    private VolumesManager volumes_manager;
 
     construct {
-        disks_manager = DisksManager.get_default ();
+        volumes_manager = VolumesManager.get_default ();
 
         var start_window_controls = new Gtk.WindowControls (Gtk.PackType.START);
 
@@ -34,23 +34,33 @@ public class EspaceLibre.DisksView : Granite.Bin {
         disk_list_header.pack_end (refresh_button);
 
         disk_list_placeholder = new Granite.Placeholder (_("No disk found")) {
-            description = _("Mounted disks should appear here"),
+            description = _("Mounted volumes should appear here"),
             icon = new ThemedIcon ("playlist-queue")
         };
 
-        var selection_model = new Gtk.SingleSelection (disks_manager.disks) {
+        var list_store = new GLib.ListStore(typeof (VolumeEntry));
+        volumes_manager.items_changed.connect (() => {
+            list_store.remove_all ();
+            foreach (var entry in volumes_manager.volumes) {
+                print ("adding entry\n");
+                list_store.append (entry);
+            }
+        });
+
+        var selection_model = new Gtk.SingleSelection (list_store) {
             autoselect = false
         };
-        selection_model.items_changed.connect (disks_manager.on_items_changed);
+        selection_model.items_changed.connect (volumes_manager.on_items_changed);
 
         var labels_size_group = new Gtk.SizeGroup (Gtk.SizeGroupMode.HORIZONTAL);
         factory = new Gtk.SignalListItemFactory ();
         factory.setup.connect ((obj) => {
             var list_item = (Gtk.ListItem) obj;
             list_item.child = new DiskRow (labels_size_group);
-            if (!disks_manager.has_items) {
+            //  labels_size_group.add_widget (list_item.child);
+            if (!volumes_manager.has_items ()) {
                 warning ("no items. selected: %u", selection_model.selected);
-                disks_manager.current_disk = (DiskEntry)selection_model.selected_item;
+                volumes_manager.current_volume = (VolumeEntry) selection_model.selected_item;
             }
         });
 
@@ -59,7 +69,7 @@ public class EspaceLibre.DisksView : Granite.Bin {
             var row = (DiskRow) list_item.child;
             // Do not bind again, values do not update, entries are removed and recreated
             if (row.partition_object == null) {
-                row.partition_object = (DiskEntry) list_item.item;
+                row.partition_object = (VolumeEntry) list_item.item;
             }
         });
 
@@ -99,20 +109,20 @@ public class EspaceLibre.DisksView : Granite.Bin {
 
         /* SIGNALS */
 
-        disks_manager.disks.items_changed.connect (() => {
-            if (disks_manager.has_items) {
+        volumes_manager.items_changed.connect (() => {
+            if (volumes_manager.has_items ()) {
                 disks_stack.visible_child = scrolled;
                 return;
             }
 
-            info ("disks attribute is null/empty");
+            info ("volumes attribute is null/empty");
             disks_stack.visible_child = disk_list_placeholder;
         });
 
-        disks_manager.invalids_found.connect ((count) => {
+        volumes_manager.invalids_found.connect ((count) => {
             error_toast.title = ngettext (
-                "%d invalid disk was not added to the queue",
-                "%d invalid disks were not added to the queue",
+                "%d invalid volume was not added to the queue",
+                "%d invalid volumes were not added to the queue",
                 count).printf (count);
             error_toast.send_notification ();
         });
@@ -141,7 +151,7 @@ public class EspaceLibre.DisksView : Granite.Bin {
             //      }
             //  }
 
-            disks_manager.current_disk = (DiskEntry)selection_model.selected_item;
+            volumes_manager.current_volume = (VolumeEntry)selection_model.selected_item;
         });
     }
 }

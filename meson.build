@@ -22,11 +22,13 @@ config_file = configure_file(
 adw_dep = dependency('libadwaita-1', version: '>=1.4.0')
 granite_dep = dependency('granite-7', version: '>=7.7.0') # Granite.Bin
 gtk_dep = dependency('gtk4')
+gio_dep = dependency('gio-2.0', version: '>= 2.80.0')
 
 dependencies = [
     adw_dep,
     granite_dep,
     gtk_dep,
+    gio_dep,
     meson.get_compiler('vala').find_library('posix'),
 ]
 
