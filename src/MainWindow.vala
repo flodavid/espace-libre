@@ -74,6 +74,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
 
         disks_manager.read_fstab ();
         disks_manager.read_df ();
+        //  disks_manager.read_volumes ();
     }
 
     public void start_refresh () {

@@ -120,6 +120,94 @@ public class EspaceLibre.DisksManager : Object {
         }
     }
 
+
+    /**
+     * Alternative to readDf using VolumeMonitor. Could also be an alternative to readFSTAB.
+     * All functionalities are not supported as system partitions are not reported as volumes
+     */
+    public void read_volumes () {
+        //  GLib.Environment.get_system_data_dirs. // TODO use it ?
+
+        DiskEntry disk;
+        for (uint i = disks.get_n_items (); i --> 0; ) {
+            disk = (DiskEntry) disks.get_item (i);
+            disk.mounted = true; // set all disks as mounted
+        }
+        uint i = disks.n_items;
+        for (; i --> 0;) {
+            disk = (DiskEntry) disks.get_item (i);
+            add_disk_info_from_volumes (disk);
+        }
+    }
+
+    private void add_disk_info_from_volumes (DiskEntry disk) {
+        var volumes = VolumeMonitor.@get ().get_volumes ();
+        if (volumes != null) {
+            Volume volume = null;
+            GLib.FileInfo info = null;
+            for (unowned List<Volume>? volume_elem = volumes.first ();
+                    volume_elem != null && info == null;
+                    volume_elem = volume_elem.next)
+            {
+                volume = volume_elem.data;
+
+                print ("volume %s. ID: %s. Label: %s\n",
+                    volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
+
+                if (disk.file_system == volume.get_identifier ("unix-device"))
+                {
+                    print ("found volume %s. ID: %s. Label: %s\n",
+                        volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
+
+                    try {
+                        if (volume.get_mount () != null) {
+                            info = volume.get_mount ().get_root ().query_filesystem_info ("filesystem::*");
+                        } else {
+                            current_disk.mounted = false;
+                            debug ("%s is not mounted", volume.get_name ());
+                            info = volume.get_activation_root ().query_filesystem_info ("filesystem::*");
+                        }
+                    } catch (GLib.Error error) {
+                        if (!(error is IOError.CANCELLED)) {
+                            warning ("Error querying filesystem info for '%s': %s", volume.get_mount ().get_root ().get_uri (), error.message);
+                        }
+
+                        info = null;
+                    }
+                }
+            }
+
+
+            // Partition disks are not listed as volume, but they are mounted
+            if (info == null && disk.mounted == true) {
+                debug ("no volume found for a mounted disk, it must be a system partition");
+                volume = null;
+                info = File.new_for_path(disk.mount_point).query_filesystem_info ("filesystem::*");
+                disk.mounted = false;
+                //  disk.is_system = true; // TODO différencier monté et partition systène
+            }
+
+            if (volume != null) {
+                disk.device_type = partition_rotational_type (
+                    volume.get_name (), volume.get_identifier ("unix-device").substring (5, 3));
+            }
+
+            if (info != null) {
+                if (info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
+                    disk.kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
+                }
+                if (info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
+                    disk.kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
+                }
+                if ((disk.fs_type == "auto" || disk.fs_type == "fuse")
+                    && info.has_attribute (FileAttribute.FILESYSTEM_TYPE))
+                {
+                    disk.fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
+                }
+            }
+        }
+    }
+
     /**
      * reads the df-commands results
      */
@@ -220,6 +308,7 @@ public class EspaceLibre.DisksManager : Object {
 
         read_fstab ();
         read_df ();
+        //  read_volumes ();
         on_items_changed ();
     }
 
