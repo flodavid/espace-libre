@@ -73,6 +73,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
         volumes_manager.add_volumes_from_volume_monitor ();
+        volumes_manager.add_system_volumes ();
 
         //  volumes_manager.add_volumes_from_FSTAB ();
         //  volumes_manager.read_df ();

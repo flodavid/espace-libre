@@ -126,9 +126,8 @@ public class EspaceLibre.VolumesManager : Object {
      * Get the non-system mounted volumes
      */
     public void add_volumes_from_volume_monitor () {
-        var volume_infos = VolumeMonitor.@get ().get_volumes ();
+        var volume_infos = VolumeMonitor.get ().get_volumes ();
         if (volume_infos != null) {
-            Volume volume = null;
             foreach (var volume_info in volume_infos) {
                 warning ("adding %s", volume_info.get_name ());
                 var device_type = partition_rotational_type (
@@ -137,8 +136,115 @@ public class EspaceLibre.VolumesManager : Object {
             }
         }
 
+        var infos = VolumeMonitor.get ().get_mounts ();
+        if (infos != null) {
+            foreach (var info in infos) {
+                warning ("drive %s", info.get_name ());
+
+                var volume_info = info.get_volume ();
+                if (volume_info != null) {
+                    warning ("adding %s", volume_info.get_name ());
+                    var device_type = partition_rotational_type (
+                        volume_info.get_name (), volume_info.get_identifier ("unix-device").substring (5, 3));
+                    volumes.append(new GenericVolume(volume_info, device_type));
+                }
+            }
+        }
+
         items_changed ();
     }
+
+    /**
+     * Get the non-system mounted volumes
+     */
+    public void add_system_volumes () {
+        var data_dirs = new Gee.ArrayList<string> ();
+        data_dirs.add ("/");
+        data_dirs.add ("/home");
+        data_dirs.add ("/var");
+        var small_dirs = new Gee.ArrayList<string> ();
+        small_dirs.add ("/bin");
+        small_dirs.add ("/etc");
+   
+        foreach (var dir in data_dirs) {
+            get_dir_metadata (dir);
+        }
+    
+        foreach (var dir in small_dirs) {
+            get_dir_metadata (dir);
+        }
+
+        items_changed ();
+    }
+    
+    private void get_dir_metadata (string dir_path) {
+        print ("\ndata dir: %s\n", dir_path);
+        var info = File.new_for_path(dir_path).query_filesystem_info ("filesystem::*");
+
+        if (info != null) {
+            if (info.has_attribute (FileAttribute.STANDARD_DISPLAY_NAME)) {
+                string display_name = info.get_attribute_string (FileAttribute.STANDARD_DISPLAY_NAME);
+                print ("display_name: %s\n", display_name);
+            }
+            if (info.has_attribute (FileAttribute.STANDARD_NAME)) {
+                string name = info.get_attribute_string (FileAttribute.STANDARD_NAME);
+                print ("name: %s\n", name);
+            }
+            if (info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
+                uint64 kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1048576;
+                print ("size: %lluMo\n", kb_size);
+            }
+            if (info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
+                uint64 kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1048576;
+                print ("space available: %lluMo\n", kb_avail);
+            }
+            if (info.has_attribute (FileAttribute.FILESYSTEM_USED)) {
+                uint64 fs_used = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_USED) / 1048576;
+                print ("fs_used: %lluMo\n", fs_used);
+            }
+            if (info.has_attribute (FileAttribute.FILESYSTEM_TYPE)) {
+                string fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
+                print ("fs_type: %s\n", fs_type);
+            }
+            if (info.has_attribute (FileAttribute.ID_FILE)) {
+                string id_file = info.get_attribute_string (FileAttribute.ID_FILE);
+                print ("id_file: %s\n", id_file);
+            }
+            if (info.has_attribute (FileAttribute.ID_FILESYSTEM)) {
+                string id_filesystem = info.get_attribute_string (FileAttribute.ID_FILESYSTEM);
+                print ("id_filesystem: %s\n", id_filesystem);
+            }
+            if (info.has_attribute (FileAttribute.MOUNTABLE_UNIX_DEVICE_FILE)) {
+                string mountable = info.get_attribute_string (FileAttribute.MOUNTABLE_UNIX_DEVICE_FILE);
+                print ("mountable: %s\n", mountable);
+            }
+            if (info.has_attribute (FileAttribute.STANDARD_TARGET_URI)) {
+                string uri = info.get_attribute_string (FileAttribute.STANDARD_TARGET_URI);
+                print ("uri: %s\n", uri);
+            }
+            if (info.has_attribute (FileAttribute.MOUNTABLE_UNIX_DEVICE)) {
+                uint mountable = info.get_attribute_uint32 (FileAttribute.MOUNTABLE_UNIX_DEVICE);
+                print ("mountable: %u", mountable);
+            }
+            if (info.has_attribute (FileAttribute.UNIX_DEVICE)) {
+                uint device = info.get_attribute_uint32 (FileAttribute.UNIX_DEVICE);
+                print ("device: %u", device);
+            }
+            if (info.has_attribute (FileAttribute.UNIX_UID)) {
+                uint id = info.get_attribute_uint32 (FileAttribute.UNIX_UID);
+                print ("id: %u", id);
+            }
+            if (info.has_attribute (FileAttribute.UNIX_GID)) {
+                uint gid = info.get_attribute_uint32 (FileAttribute.UNIX_GID);
+                print ("gid: %u", gid);
+            }
+            if (info.has_attribute (FileAttribute.UNIX_INODE)) {
+                uint64 inode = info.get_attribute_uint64 (FileAttribute.UNIX_INODE);
+                print ("inode: %llu\n", inode);
+            }
+        }
+    }
+
 
     //  /**
     //   * Alternative to readDf using VolumeMonitor. Could also be an alternative to readFSTAB.
