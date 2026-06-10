@@ -72,8 +72,8 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
-        disks_manager.readFSTAB ();
-        disks_manager.readDF ();
+        disks_manager.read_fstab ();
+        disks_manager.read_df ();
     }
 
     public void start_refresh () {

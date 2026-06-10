@@ -105,7 +105,7 @@ public class EspaceLibre.DisksView : Granite.Bin {
                 return;
             }
 
-            info("disks attribute is null/empty");
+            info ("disks attribute is null/empty");
             disks_stack.visible_child = disk_list_placeholder;
         });
 
@@ -145,4 +145,3 @@ public class EspaceLibre.DisksView : Granite.Bin {
         });
     }
 }
-

@@ -14,7 +14,7 @@ public class EspaceLibre.MountPointRow : Gtk.Box {
     construct {
         orientation = HORIZONTAL;
         spacing = 4;
-        
+
         set_cursor (new Gdk.Cursor.from_name ("pointer", null));
 
         // Image        
@@ -42,4 +42,3 @@ public class EspaceLibre.MountPointRow : Gtk.Box {
         }
     }
 }
-

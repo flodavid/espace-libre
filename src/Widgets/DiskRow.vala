@@ -42,7 +42,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
 
     public DiskRow (Gtk.SizeGroup _labels_size_group) {
         labels_size_group = _labels_size_group;
-        
+
         disk_image = new Gtk.Image ();
         disk_image.height_request = 38;
         disk_image.width_request = 38;
