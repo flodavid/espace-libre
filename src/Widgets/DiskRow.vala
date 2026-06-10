@@ -84,7 +84,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_all () {
-        disk_label.label = _partition_object.name;
+        disk_label.label = _partition_object.label;
+        disk_label.label = _partition_object.label != null ? _partition_object.label : _partition_object.file_system;
         mount_point.label = _partition_object.mount_point;
         // TODO make something not hardcoded to detect system partitions
         space_bar.is_system = _partition_object.mount_point == "/" || _partition_object.mount_point == "/home";
@@ -102,6 +103,6 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_fs_type (Object self, GLib.ParamSpec spec) {
-        warning ("update FS type of %s to: %s", _partition_object.name, _partition_object.fs_type);
+        warning ("update FS type of %s to: %s", _partition_object.file_system, _partition_object.fs_type);
     }
 }

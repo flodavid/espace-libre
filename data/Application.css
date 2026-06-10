@@ -31,3 +31,13 @@ levelbar block.low  {
 mountPointRow .link:visited  {
   opacity: 1;
 }
+
+.property label.title {
+  opacity: 0.75;
+  font-size: 0.85rem;
+}
+
+.property label.subtitle {
+  opacity: initial;
+  font-size: initial;
+}

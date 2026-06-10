@@ -8,35 +8,47 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
     private Gtk.Button unmount_eject_button;
 
     construct {
-        var disk_label = new Gtk.Label (_("Disk")) {
-            tooltip_text = _("Partition Name"),
-            ellipsize = Pango.EllipsizeMode.START
-        };
-        disk_label.add_css_class (Granite.STYLE_CLASS_H3_LABEL);
-
-        var device_type = new Gtk.Label (_("Device type")) {
-            tooltip_text = _("Device Type"),
-            justify = Gtk.Justification.LEFT,
-            halign = Gtk.Align.CENTER
-        };
-        device_type.add_css_class ("italic_text");
-
-        var file_system_format = new Gtk.Label (_("Unknown FS")) {
-            tooltip_text = _("File System Format"),
-            justify = Gtk.Justification.LEFT,
-            halign = Gtk.Align.START,
-            ellipsize = Pango.EllipsizeMode.START
+        var group = new Adw.PreferencesGroup () {
+            title = _("Partition Details"),
+            tooltip_text = _("Partition Name and Infos"),
         };
 
-        var partition_identifier = new Gtk.Label (_("Partition")) {
-            tooltip_text = _("Partition ID"),
-            justify = Gtk.Justification.LEFT,
-            halign = Gtk.Align.START
+        var device_type = new Adw.ActionRow () {
+            title = _("Device type"),
+            subtitle = _("Device Type"),
+            subtitle_selectable = true,
         };
+        //  Emphasize subtitle instead of title
+        device_type.add_css_class ("property");
 
-        var partition_info = new Gtk.Box (HORIZONTAL, 4);
-        partition_info.append (file_system_format);
-        partition_info.append (partition_identifier);
+        var file_system_format = new Adw.ActionRow () {
+            title = _("File System Format"),
+            subtitle = _("Unknown FS"),
+            subtitle_selectable = true,
+        };
+        //  Emphasize subtitle instead of title
+        file_system_format.add_css_class ("property");
+
+        var partition_label = new Adw.ActionRow () {
+            title = _("Partition Label"),
+            subtitle = _("Label"),
+            subtitle_selectable = true,
+        };
+        //  Emphasize subtitle instead of title
+        partition_label.add_css_class ("property");
+
+        var partition_identifier = new Adw.ActionRow () {
+            title = _("Partition ID"),
+            subtitle = _("Partition"),
+            subtitle_selectable = true,
+        };
+        //  Emphasize subtitle instead of title
+        partition_identifier.add_css_class ("property");
+        
+        group.add (device_type);
+        group.add (file_system_format);
+        group.add (partition_label);
+        group.add (partition_identifier);
 
         var mount_info = new MountPointRow ();
 
@@ -64,9 +76,8 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
 
         orientation = Gtk.Orientation.VERTICAL;
         spacing = 12;
-        append (disk_label);
-        append (device_type);
-        append (partition_info);
+
+        append (group);
         append (mount_info);
         append (unmount_eject_working_stack);
 
@@ -75,14 +86,15 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         disks_manager.notify["current-disk"].connect (() => {
             debug ("selected disk changed");
             if (disks_manager.current_disk != null) {
-                partition_identifier.label = disks_manager.current_disk.file_system;
-                disk_label.label = disks_manager.current_disk.name;
-                file_system_format.label = disks_manager.current_disk.fs_type;
-                device_type.label = disks_manager.current_disk.device_type.device_type_name ();
+                partition_label.subtitle = disks_manager.current_disk.label != null
+                    ? disks_manager.current_disk.label
+                    : "<i>None</i>";
+                partition_identifier.subtitle = disks_manager.current_disk.file_system;
+                file_system_format.subtitle = disks_manager.current_disk.fs_type;
+                device_type.subtitle = disks_manager.current_disk.device_type.device_type_name ();
                 mount_info.update_mount_point (disks_manager.current_disk.mount_point);
             } else {
-                partition_identifier.label = _("Not mounted");
-                disk_label.label = _("Disk");
+                partition_identifier.subtitle = _("Not mounted");
             }
         });
     }

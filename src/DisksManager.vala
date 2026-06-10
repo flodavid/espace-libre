@@ -106,7 +106,7 @@ public class EspaceLibre.DisksManager : Object {
                             var disk = new DiskEntry (file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
                             disk.uuid = uuid;
                             if (label != null) {
-                                disk.name = label;
+                                disk.label = label;
                             }
 
                             disks.append(disk);

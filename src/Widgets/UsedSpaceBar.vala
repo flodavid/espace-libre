@@ -98,7 +98,7 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
             "<span font-features='tnum'>%.1f</span>".printf (_free_space / GIGA) + _("Go") + "/" +
             "<span font-features='tnum'>%.1f</span>".printf (_space_size / GIGA) + _("Go");
         var free_percent = _free_space * 100.0 / _space_size;
-        free_space_percent_label.label = "%3u%%".printf ((uint)free_percent);
+        free_space_percent_label.label = "%.0f%%".printf (free_percent);
 
         filled_bar.value = _space_size - _free_space;
         filled_bar.max_value = _space_size;
@@ -111,8 +111,8 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
         }
 
         if (_is_system) {
-            filled_bar.add_offset_value ("low", double.max(0.0, space_size - 3 * GIGA));
-            filled_bar.add_offset_value ("high", double.max(0.0, space_size - 1 * GIGA));
+            filled_bar.add_offset_value ("low", double.max(0.80 * space_size, space_size - 3 * GIGA));
+            filled_bar.add_offset_value ("high", double.max(0.95 * space_size, space_size - 1 * GIGA));
         } else {
             filled_bar.add_offset_value ("low", 0.95 * space_size);
             filled_bar.add_offset_value ("high", 0.99 * space_size);

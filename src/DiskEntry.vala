@@ -11,7 +11,7 @@ public class EspaceLibre.DiskEntry : Object {
     public string mount_options { get; construct; }
     public string dump { get; construct; }
     public string pass { get; construct; }
-    public string name { get; set; }
+    public string label { get; set; }
     public string uuid { get; set; }
     public bool mounted { get; set; }
     public DEVICE_TYPE device_type { get; set; }
@@ -27,7 +27,6 @@ public class EspaceLibre.DiskEntry : Object {
     }
 
     construct {
-        name = file_system;
         mounted = false;
         device_type = UNKNOWN;
     }
