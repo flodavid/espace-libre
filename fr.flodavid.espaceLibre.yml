@@ -8,6 +8,7 @@ finish-args:
   - '--socket=fallback-x11'
   - '--socket=wayland'
   - '--device=dri'
+  - '--filesystem=host-etc:ro'
 
 modules:
   - name: espaceLibre
