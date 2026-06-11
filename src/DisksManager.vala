@@ -187,25 +187,7 @@ public class EspaceLibre.DisksManager : Object {
                                 disk = current_disk;
 
                                 string disk_partition = disk.file_system.split ("/")[2];
-                                if (disk_partition.has_prefix ("nvme")) {
-                                    debug ("disk [%s] is on NVMe Drive", disk_partition);
-                                    disk.device_type = NVME;
-                                } else {
-                                    string disk_device = disk_partition.substring (0, 3);
-                                    int device_rotational = get_rotational (disk_device);
-
-                                    if (device_rotational == 1) {
-                                        debug ("disk [%s] is on HDD", disk_partition);
-                                        disk.device_type = HDD;
-                                    } else {
-                                        if (device_rotational == 0) {
-                                            debug ("disk [%s] is on SSD", disk_partition);
-                                            disk.device_type = SSD;
-                                        } else {
-                                            debug ("disk [%s] device type is unknown", disk_partition);
-                                        }
-                                    }
-                                }
+                                disk.device_type = partition_rotational_type (disk_partition, disk_partition.substring (0, 3));
                             }
                         }
 
@@ -216,7 +198,6 @@ public class EspaceLibre.DisksManager : Object {
                             disk.kb_avail = uint64.parse (words[4]);
                             //  disk.avail_percent = words[5]; // can be calculated
                             disk.mounted = true; // it is now mounted (df lists only mounted)
-
                         }
                     }
                 } else {
@@ -314,12 +295,39 @@ public class EspaceLibre.DisksManager : Object {
         cat_output = cat_output.strip ();
 
         if (cat_output == "0") {
+            debug ("%s disk is NOT rotational", device_name);
             return 0;
         } else if (cat_output == "1") {
+            debug ("%s disk is rotational", device_name);
             return 1;
         } else {
             warning ("Failed to check if the disk device is an HDD:\n\t%s\n%s", cat_output, cat_error);
             return -1;
+        }
+    }
+
+    /**
+     * get the type of drive, rotational disk, (NVMe) solid state drive.
+     */
+    private DeviceType partition_rotational_type (string disk_partition_name, string disk_partition_path) {
+        if (disk_partition_path == "nvm") {
+            debug ("disk [%s] is on NVMe Drive", disk_partition_name);
+            return NVME;
+        } else {
+            int device_rotational = get_rotational (disk_partition_path);
+
+            if (device_rotational == 1) {
+                debug ("disk [%s] is on HDD", disk_partition_name);
+                return HDD;
+            } else {
+                if (device_rotational == 0) {
+                    debug ("disk [%s] is on SSD", disk_partition_name);
+                    return SSD;
+                } else {
+                    warning ("disk [%s] rotational type is unknown", disk_partition_name);
+                    return UNKNOWN;
+                }
+            }
         }
     }
 }
