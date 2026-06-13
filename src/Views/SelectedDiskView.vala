@@ -8,18 +8,10 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
     private Gtk.Button unmount_eject_button;
 
     construct {
-        var group = new Adw.PreferencesGroup () {
+        var volume_group = new Adw.PreferencesGroup () {
             title = _("Partition Details"),
             tooltip_text = _("Partition Name and Infos"),
         };
-
-        var DeviceType = new Adw.ActionRow () {
-            title = _("Device type"),
-            subtitle = _("Device Type"),
-            subtitle_selectable = true,
-        };
-        //  Emphasize subtitle instead of title
-        DeviceType.add_css_class ("property");
 
         var file_system_format = new Adw.ActionRow () {
             title = _("File System Format"),
@@ -44,11 +36,10 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         };
         //  Emphasize subtitle instead of title
         partition_identifier.add_css_class ("property");
-        
-        group.add (DeviceType);
-        group.add (file_system_format);
-        group.add (partition_label);
-        group.add (partition_identifier);
+
+        volume_group.add (file_system_format);
+        volume_group.add (partition_label);
+        volume_group.add (partition_identifier);
 
         var mount_info = new MountPointRow ();
 
@@ -77,9 +68,25 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         orientation = Gtk.Orientation.VERTICAL;
         spacing = 12;
 
-        append (group);
+        var drive_group = new Adw.PreferencesGroup () {
+            title = _("Drive Details"),
+            tooltip_text = _("Drive Infos"),
+        };
+
+        var device_type = new Adw.ActionRow () {
+            title = _("Device type"),
+            subtitle = _("Device Type"),
+            subtitle_selectable = true,
+        };
+        //  Emphasize subtitle instead of title
+        device_type.add_css_class ("property");
+        
+        drive_group.add (device_type);
+
+        append (volume_group);
         append (mount_info);
         append (unmount_eject_working_stack);
+        append (drive_group);
 
         var disks_manager = DisksManager.get_default ();
 
@@ -91,7 +98,7 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
                     : "<i>None</i>";
                 partition_identifier.subtitle = disks_manager.current_disk.file_system;
                 file_system_format.subtitle = disks_manager.current_disk.fs_type;
-                DeviceType.subtitle = disks_manager.current_disk.device_type.device_type_name ();
+                device_type.subtitle = disks_manager.current_disk.device_type.device_type_name ();
                 mount_info.update_mount_point (disks_manager.current_disk.mount_point);
             } else {
                 partition_identifier.subtitle = _("Not mounted");
