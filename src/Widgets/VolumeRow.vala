@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-public class EspaceLibre.DiskRow : Granite.Bin {
-    private DiskEntry _partition_object = null;
-    public DiskEntry partition_object {
+public class EspaceLibre.VolumeRow : Granite.Bin {
+    private VolumeEntry _partition_object = null;
+    public VolumeEntry partition_object {
         get {
             return _partition_object;
         }
@@ -35,28 +35,25 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private Gtk.Label mount_point;
-    private Gtk.Label disk_label;
-    private Gtk.Image disk_image;
+    private Gtk.Label volume_label;
+    private Gtk.Image volume_image;
     private EspaceLibre.UsedSpaceBar space_bar;
-    private Gtk.SizeGroup labels_size_group;
 
-    public DiskRow (Gtk.SizeGroup _labels_size_group) {
-        labels_size_group = _labels_size_group;
-
-        disk_image = new Gtk.Image ();
-        disk_image.height_request = 38;
-        disk_image.width_request = 38;
+    public VolumeRow (Gtk.SizeGroup labels_size_group) {
+        volume_image = new Gtk.Image ();
+        volume_image.height_request = 38;
+        volume_image.width_request = 38;
 
         var aspect_frame = new Gtk.AspectFrame (0.5f, 0.5f, 1, false) {
-            child = disk_image
+            child = volume_image
         };
 
-        disk_label = new Gtk.Label (null) {
+        volume_label = new Gtk.Label (null) {
             ellipsize = Pango.EllipsizeMode.START,
             hexpand = false,
             xalign = 0
         };
-        labels_size_group.add_widget (disk_label);
+        labels_size_group.add_widget (volume_label);
 
         mount_point = new Gtk.Label (null) {
             ellipsize = Pango.EllipsizeMode.START,
@@ -65,6 +62,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
         };
         mount_point.add_css_class (Granite.CssClass.DIM);
         mount_point.add_css_class (Granite.CssClass.SMALL);
+        labels_size_group.add_widget (mount_point);
 
         space_bar = new UsedSpaceBar ();
 
@@ -76,7 +74,7 @@ public class EspaceLibre.DiskRow : Granite.Bin {
             margin_bottom = 6
         };
         grid.attach (aspect_frame, 0, 0, 1, 2);
-        grid.attach (disk_label, 1, 0);
+        grid.attach (volume_label, 1, 0);
         grid.attach (mount_point, 1, 1);
         grid.attach (space_bar, 2, 0, 1, 2);
 
@@ -84,8 +82,8 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_all () {
-        disk_label.label = _partition_object.label;
-        disk_label.label = _partition_object.label != null ? _partition_object.label : _partition_object.file_system;
+        volume_label.label = _partition_object.label;
+        volume_label.label = _partition_object.label != null ? _partition_object.label : _partition_object.file_system;
         mount_point.label = _partition_object.mount_point;
         // TODO make something not hardcoded to detect system partitions
         space_bar.is_system = _partition_object.mount_point == "/" || _partition_object.mount_point == "/home";
@@ -99,10 +97,13 @@ public class EspaceLibre.DiskRow : Granite.Bin {
     }
 
     private void update_cover_art () {
-        disk_image.paintable = _partition_object.get_texture ();
+        var fs_volume = (VolumeEntry) _partition_object;
+        if (fs_volume != null) {
+            volume_image.paintable = fs_volume.get_texture ();
+        }
     }
 
     private void update_fs_type (Object self, GLib.ParamSpec spec) {
-        warning ("update FS type of %s to: %s", _partition_object.file_system, _partition_object.fs_type);
+        print ("update FS type of %s to: %s\n", _partition_object.label, _partition_object.fs_type);
     }
 }

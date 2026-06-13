@@ -1,11 +1,11 @@
 sources = [
     'Application.vala',
-    'DiskEntry.vala',
+    'VolumeEntry.vala',
     'MainWindow.vala',
-    'DisksManager.vala',
-    'Views/SelectedDiskView.vala',
-    'Views/DisksView.vala',
-    'Widgets/DiskRow.vala',
+    'VolumesManager.vala',
+    'Views/SelectedVolumeView.vala',
+    'Views/VolumesView.vala',
+    'Widgets/VolumeRow.vala',
     'Widgets/MountPointRow.vala',
     'Widgets/UsedSpaceBar.vala',
 ]
