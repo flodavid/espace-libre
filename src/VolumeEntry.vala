@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-public class EspaceLibre.DiskEntry : Object {
+public class EspaceLibre.VolumeEntry : Object {
 
     public string file_system { get; construct; }
     public string mount_point { get; set; }
@@ -11,7 +11,7 @@ public class EspaceLibre.DiskEntry : Object {
     public string mount_options { get; construct; }
     public string dump { get; construct; }
     public string pass { get; construct; }
-    public string label { get; set; }
+    public string ? label { get; set; }
     public string uuid { get; set; }
     public bool mounted { get; set; }
     public DeviceType device_type { get; set; }
@@ -19,7 +19,7 @@ public class EspaceLibre.DiskEntry : Object {
     public uint64 kb_used { get; set; default = 0; }
     public uint64 kb_avail { get; set; default = 0; }
 
-    public DiskEntry (string file_system, string mount_point, string format_type, string mount_options,
+    public VolumeEntry (string file_system, string mount_point, string format_type, string mount_options,
         string dump, string pass
     ) {
         Object (file_system: file_system, mount_point: mount_point, fs_type: format_type,

@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2026 flodavid
  */
 
-public class EspaceLibre.SelectedDiskView : Gtk.Box {
+public class EspaceLibre.SelectedVolumeView : Gtk.Box {
     private Gtk.Image folder_image;
     private Gtk.Button unmount_eject_button;
 
@@ -88,18 +88,18 @@ public class EspaceLibre.SelectedDiskView : Gtk.Box {
         append (unmount_eject_working_stack);
         append (drive_group);
 
-        var disks_manager = DisksManager.get_default ();
+        var volumes_manager = VolumesManager.get_default ();
 
-        disks_manager.notify["current-disk"].connect (() => {
-            debug ("selected disk changed");
-            if (disks_manager.current_disk != null) {
-                partition_label.subtitle = disks_manager.current_disk.label != null
-                    ? disks_manager.current_disk.label
+        volumes_manager.notify["current-volume"].connect (() => {
+            debug ("selected volume changed");
+            if (volumes_manager.current_volume != null) {
+                partition_label.subtitle = volumes_manager.current_volume.label != null
+                    ? volumes_manager.current_volume.label
                     : "<i>None</i>";
-                partition_identifier.subtitle = disks_manager.current_disk.file_system;
-                file_system_format.subtitle = disks_manager.current_disk.fs_type;
-                DeviceType.subtitle = disks_manager.current_disk.device_type.device_type_name ();
-                mount_info.update_mount_point (disks_manager.current_disk.mount_point);
+                partition_identifier.subtitle = volumes_manager.current_volume.file_system;
+                file_system_format.subtitle = volumes_manager.current_volume.fs_type;
+                DeviceType.subtitle = volumes_manager.current_volume.device_type.device_type_name ();
+                mount_info.update_mount_point (volumes_manager.current_volume.mount_point);
             } else {
                 partition_identifier.subtitle = _("Not mounted");
             }
