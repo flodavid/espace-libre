@@ -14,12 +14,10 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
         set {
             _space_size = value;
 
-            free_space_fraction_label.visible = true;
             if (_free_space != 0) {
                 set_fractions_and_filled_bar ();
             } else {
-                free_space_fraction_label.label =
-                    "<span font-features='tnum'>%.1f</span>".printf (_free_space / GIGA) + _("Go");
+                free_space_fraction_label.label = "<i>Not mounted</i>";
             }
         }
     }
@@ -65,7 +63,6 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
         column_spacing = 6;
 
         free_space_fraction_label = new Gtk.Label ("---Go") {
-            visible = false,
             valign = CENTER,
             hexpand = true,
             ellipsize = Pango.EllipsizeMode.START,

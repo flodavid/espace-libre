@@ -72,9 +72,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
-        volumes_manager.add_volumes_from_fstab ();
-
-        volumes_manager.read_df ();
+        volumes_manager.refresh ();
     }
 
     public void start_refresh () {
