@@ -43,6 +43,11 @@ public class EspaceLibre.VolumesView : Granite.Bin {
         };
         selection_model.items_changed.connect (volumes_manager.on_items_changed);
 
+        volumes_manager.automatically_selected_item.connect ((position) => {
+            debug ("force item selection at position: %u", position);
+            selection_model.set_selected (position);
+        });
+
         var labels_size_group = new Gtk.SizeGroup (Gtk.SizeGroupMode.HORIZONTAL);
         factory = new Gtk.SignalListItemFactory ();
         factory.setup.connect ((obj) => {

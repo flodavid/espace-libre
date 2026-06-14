@@ -18,6 +18,19 @@ public class EspaceLibre.VolumeEntry : Object {
     public uint64 kb_size { get; set; default = 0; }
     public uint64 kb_used { get; set; default = 0; }
     public uint64 kb_avail { get; set; default = 0; }
+    public Mount? mount { get; set; default = null; }
+
+    public virtual bool can_unmount {
+        get {
+            return mounted && mount != null && mount.can_unmount ();
+        }
+    }
+
+    public virtual bool can_eject {
+        get {
+            return mounted && mount != null && mount.can_eject ();
+        }
+    }
 
     public VolumeEntry (string file_system, string mount_point, string format_type, string mount_options,
         string dump, string pass

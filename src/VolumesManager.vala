@@ -12,6 +12,7 @@ public class EspaceLibre.VolumesManager : Object {
     public ListStore volumes { get; private set; }
     
     public signal void invalids_found (int count);
+    public signal void automatically_selected_item (uint position);
 
     private static string BLANK = " ";
     private static GLib.Once<VolumesManager> instance;
@@ -30,10 +31,78 @@ public class EspaceLibre.VolumesManager : Object {
         return volumes.get_n_items () > 0;
     }
 
+    // TODO add periodic refresh with "read_df ()"
+    public void refresh () {
+        info ("Remove and rescan volumes");
+
+        volumes.remove_all();
+
+        add_volumes_from_fstab ();
+        add_volumes_from_volume_monitor ();
+
+        read_df ();
+
+        update_current_volume ();
+
+        on_items_changed ();
+    }
+
+    // TODO add periodic refresh with "read_df ()"
+    public async void unmount_current () {
+        info ("Unmount currently selected volume or eject selected device");
+        if (current_volume != null && current_volume.mounted && current_volume.mount != null) {
+                unmount_mount.begin (current_volume.mount, (obj, res) => {
+                unmount_mount.end (res);
+                refresh ();
+                current_volume.mounted = false;
+                current_volume = current_volume;
+            });
+        }
+        yield;
+    }
+
+    public static async bool unmount_mount (Mount mount) {
+        if (mount.can_unmount ()) {
+            var mount_op = new Gtk.MountOperation (null);
+            try {
+                yield mount.unmount_with_operation (
+                        GLib.MountUnmountFlags.NONE,
+                        mount_op,
+                        null
+                );
+                return true;
+            } catch (GLib.Error e) {
+                warning ("Unable to unmount '%s': %s", mount.get_name (), e.message);
+                return false;
+            }
+        } else {
+            return yield eject_mount (mount);
+        }
+    }
+
+    public static async bool eject_mount (Mount mount) {
+        if (mount.can_eject ()) {
+            var mount_op = new Gtk.MountOperation (null);
+            try {
+                yield mount.eject_with_operation (
+                        GLib.MountUnmountFlags.NONE,
+                        mount_op,
+                        null
+                );
+                return true;
+            } catch (GLib.Error e) {
+                warning ("Unable to eject '%s': %s", mount.get_name (), e.message);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     /**
      * tries to figure out the possibly mounted fs
      */
-    public void add_volumes_from_fstab () {
+    private void add_volumes_from_fstab () {
         string fstab_content;
         
         try {
@@ -114,10 +183,85 @@ public class EspaceLibre.VolumesManager : Object {
         }
     }
 
+    private void add_volumes_from_volume_monitor () {
+        var g_volumes = VolumeMonitor.@get ().get_volumes ();
+        if (g_volumes != null) {
+            Volume volume = null;
+            for (unowned List<Volume>? volume_elem = g_volumes.first ();
+                    volume_elem != null;
+                    volume_elem = volume_elem.next)
+            {
+                volume = volume_elem.data;
+                if (volume == null) continue;
+
+                bool already_known = false;
+                for (uint i = volumes.get_n_items (); i --> 0 && !already_known; ) {
+                    var fs_volume = (VolumeEntry) volumes.get_item (i);
+                    if (fs_volume.file_system == volume.get_identifier ("unix-device")) {
+                        already_known = true;
+                    }
+                }
+                if (!already_known) {
+                    debug ("found volume not included in fstab: %s. ID: %s. Label: %s",
+                        volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
+
+                    try {
+                        GLib.FileInfo info = null;
+                        bool is_mounted;
+                        File mount_root;
+                        uint64 kb_size = 0;
+                        uint64 kb_avail = 0;
+                        string fs_type = "Unknown";
+                        if (volume.get_mount () != null) {
+                            is_mounted = true;
+                            mount_root = volume.get_mount ().get_root ();
+                        } else {
+                            debug ("%s is not mounted", volume.get_name ());
+                            is_mounted = false;
+                            mount_root = volume.get_activation_root ();
+                        }
+                        info = mount_root != null ? mount_root.query_filesystem_info ("filesystem::*") : null;
+                        if (info != null) {
+                            if (info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
+                                kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
+                            }
+                            if (info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
+                                kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
+                            }
+                            if (info.has_attribute (FileAttribute.FILESYSTEM_TYPE)) {
+                                fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
+                            }
+                        }
+
+                        var unix_device = volume.get_identifier ("unix-device");
+                        var mount_path = is_mounted ? volume.get_mount ().get_root ().get_path () : "";
+                        var volume_entry = new VolumeEntry (
+                            unix_device, mount_root != null ? mount_root.get_path () : "", fs_type, "", "", "");
+
+                        volume_entry.uuid = volume.get_uuid ();
+                        volume_entry.mount = volume.get_mount ();
+                        volume_entry.device_type =
+                            partition_rotational_type (volume.get_name (), unix_device.substring (5, 3));
+                        if (volume.get_name () != null) {
+                            volume_entry.label = volume.get_name ();
+                        }
+
+                        print ("add volume: %s\n", volume_entry.file_system);
+                        volumes.append (volume_entry);
+                    } catch (GLib.Error error) {
+                        if (!(error is IOError.CANCELLED)) {
+                            warning ("Error querying filesystem info for '%s': %s", volume.get_mount ().get_root ().get_uri (), error.message);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * reads the df-commands results
      */
-    public void read_df () {
+    private void read_df () {
         // Avoid recreating volume entries multiple times
         if (reading_df_stderr_out) {
             info ("already reading df output, do not read a second time");
@@ -209,18 +353,23 @@ public class EspaceLibre.VolumesManager : Object {
         //  loadSettings(); // to get the mountCommands
     }
 
-    // TODO add periodic refresh with "read_df ()"
-    public void refresh () {
-        info ("Remove and rescan volumes");
 
-        volumes = new ListStore (typeof (VolumeEntry));
+    private bool update_current_volume () {
+        if (current_volume == null) {
+            return false;
+        }
 
-        add_volumes_from_fstab ();
-        //  add_volumes_from_volume_monitor ();
+        bool found = false;
+        for (uint i = volumes.get_n_items (); i --> 0 && !found; ) {
+            var volume = (VolumeEntry) volumes.get_item (i);
+            if (volume != null && current_volume.file_system == volume.file_system) {
+                current_volume = volume;
+                found = true;
+                automatically_selected_item (i);
+            }
+        }
 
-        read_df ();
-
-        on_items_changed ();
+        return current_volume != null;
     }
 
     public void on_items_changed () {
