@@ -14,10 +14,15 @@ public class EspaceLibre.VolumesManager : Object {
     public signal void invalids_found (int count);
     public signal void automatically_selected_item (uint position);
 
-    private static string BLANK = " ";
+    private const string BLANK = " ";
     private static GLib.Once<VolumesManager> instance;
 
+    private const int MOUNT_TIMEOUT_SEC = 60;
+
     private bool reading_df_stderr_out;
+    private Cancellable cancellable;
+    private uint mount_timeout_id = 0;
+
     private VolumesManager () {}
 
     construct {
@@ -47,20 +52,44 @@ public class EspaceLibre.VolumesManager : Object {
         on_items_changed ();
     }
 
-    // TODO add periodic refresh with "read_df ()"
-    public async void unmount_current () {
+    /**
+     * Try to unmount/eject the currently selected volume
+     */
+    public async bool unmount_current () {
         info ("Unmount currently selected volume or eject selected device");
-        if (current_volume != null && current_volume.mounted && current_volume.mount != null) {
-                unmount_mount.begin (current_volume.mount, (obj, res) => {
+
+        if (current_volume != null && current_volume.mounted && current_volume.glib_volume != null
+            && current_volume.glib_volume.get_mount () != null
+        ) {
+            unmount_mount.begin (current_volume.glib_volume.get_mount (), (obj, res) => {
                 unmount_mount.end (res);
                 refresh ();
                 current_volume.mounted = false;
                 current_volume = current_volume;
             });
+            return true;
         }
-        yield;
+        return false;
     }
 
+    /**
+     * Try to mount the currently selected volume
+     */
+    public async bool mount_current () {
+        info ("Mount currently selected volume or device");
+        if (current_volume == null || current_volume.mounted) {
+            warning ("Unknow volume or already mounted");
+            return false;
+        }
+
+        bool res = yield mount_volume (current_volume);
+
+        return res;
+    }
+
+    /**
+     * Try to unmount/eject the Volume at the given mount point
+     */
     public static async bool unmount_mount (Mount mount) {
         if (mount.can_unmount ()) {
             var mount_op = new Gtk.MountOperation (null);
@@ -99,6 +128,96 @@ public class EspaceLibre.VolumesManager : Object {
         }
     }
 
+    private async bool mount_volume (VolumeEntry volume) {
+        info ("Try to mount volume %s", volume.file_system);
+        bool res = false;
+        Gtk.MountOperation? mount_op = null;
+        cancellable = new Cancellable ();
+        File mount_location = null;
+
+        try {
+            bool mounting = true;
+            bool asking_password = false;
+            assert (mount_timeout_id == 0);
+
+            mount_timeout_id = Timeout.add_seconds (MOUNT_TIMEOUT_SEC, () => {
+                if (mounting && !asking_password) {
+                    mount_timeout_id = 0;
+                    warning ("Cancelled after timeout in mounting operation of %s", volume.file_system);
+                    cancellable.cancel ();
+
+                    return GLib.Source.REMOVE;
+                } else {
+                    return GLib.Source.CONTINUE;
+                }
+            });
+
+            mount_op = new Gtk.MountOperation (null);
+
+            mount_op.ask_password.connect (() => {
+                debug ("Asking for password");
+                asking_password = true;
+            });
+
+            mount_op.reply.connect (() => {
+                debug ("Password dialog finished");
+                asking_password = false;
+            });
+
+            debug ("mounting %s…", volume.file_system);
+            if (volume.glib_volume != null) {
+                if (volume.glib_volume.get_activation_root () != null) {
+                    mount_location = File.new_for_path (volume.mount_point);
+                    res = yield mount_location
+                        .mount_enclosing_volume (GLib.MountMountFlags.NONE, mount_op, cancellable);
+                } else {
+                    res = yield volume.glib_volume.mount (GLib.MountMountFlags.NONE, mount_op, cancellable);
+                }
+            } else {
+                if (volume.mount_point != null) {
+                    mount_location = File.new_for_path (volume.mount_point);
+                    res = yield mount_location
+                        .mount_enclosing_volume (GLib.MountMountFlags.NONE, mount_op, cancellable);
+                }
+                warning ("Failed to get information about the volume [%s] to be able to mount it", volume.file_system);
+            }
+        } catch (Error e) {
+            warning ("Failure when trying to mount. %s\nIf mount location is known, another method will be tried",
+                e.message);
+            if (e is IOError.ALREADY_MOUNTED) {
+                debug ("Already mounted %s", volume.file_system);
+                res = true;
+            } else if (e is IOError.NOT_FOUND) {
+                if (mount_location != null) {
+                    debug ("Enclosing mount not found %s (may be remote share)", volume.file_system);
+                    /* Do not fail loading at this point - may still load */
+                    try {
+                        info ("Retrying be mounting location instead of volume");
+                        yield mount_location.mount_mountable (GLib.MountMountFlags.NONE, mount_op, cancellable);
+                        res = true;
+                    } catch (GLib.Error e2) {
+                        warning ("Unable to mount mountable. %s", e2.message);
+                        res = false;
+                    }
+                } else {
+                    warning ("Unable to mount volume. %s", e.message);
+                    res = false;
+                }
+            } else {
+                debug ("Setting mount null 1");
+                debug ("Mount_mountable failed: %s", e.message);
+                if (e is IOError.PERMISSION_DENIED || e is IOError.FAILED_HANDLED) {
+                    warning ("Permission to mount denied");
+                }
+            }
+        } finally {
+            cancel_timeout (ref mount_timeout_id);
+        }
+
+        debug ("success %s", res.to_string ());
+        return res;
+    }
+
     /**
      * tries to figure out the possibly mounted fs
      */
@@ -110,8 +229,13 @@ public class EspaceLibre.VolumesManager : Object {
         } catch (FileError err) {
             fstab_content = null;
         }
-        if (fstab_content == null || fstab_content == "") {
-            FileUtils.get_contents ("/etc/fstab", out fstab_content);
+        try {
+            if (fstab_content == null || fstab_content == "") {
+                FileUtils.get_contents ("/etc/fstab", out fstab_content);
+            }
+        } catch (GLib.FileError err) {
+            warning ("Could not read /etc/fstab content. %s", err.message);
+            return;
         }
 
         if (fstab_content != null && fstab_content != "") {
@@ -164,15 +288,14 @@ public class EspaceLibre.VolumesManager : Object {
                         }
 
                         if (is_real_volume (file_system, columns[2], columns[1])) {
-                            debug ("Partition identifier: [%s]", file_system);
+                            info ("Partition identifier: [%s]", file_system);
                             var fs_volume = new VolumeEntry (
-                                file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
-                            fs_volume.uuid = uuid;
+                                uuid, file_system, columns[1], columns[2], columns[3], columns[4], columns[5]);
                             if (label != null) {
                                 fs_volume.label = label;
                             }
 
-                            print ("add volume: %s\n", fs_volume.file_system);
+                            info ("add volume: %s\n", fs_volume.file_system);
                             volumes.append (fs_volume);
                         } else {
                             warning ("Partition [%s] is not 'real', do not add it", file_system);
@@ -192,15 +315,19 @@ public class EspaceLibre.VolumesManager : Object {
                     volume_elem = volume_elem.next)
             {
                 volume = volume_elem.data;
-                if (volume == null) continue;
+                if (volume == null || volume.get_uuid () == null) continue;
 
                 bool already_known = false;
                 for (uint i = volumes.get_n_items (); i --> 0 && !already_known; ) {
                     var fs_volume = (VolumeEntry) volumes.get_item (i);
                     if (fs_volume.file_system == volume.get_identifier ("unix-device")) {
                         already_known = true;
+                        // Add mount info to the volume entry
+                        fs_volume.glib_volume = volume;
                     }
                 }
+
+                // Create the not yet know volume entry
                 if (!already_known) {
                     debug ("found volume not included in fstab: %s. ID: %s. Label: %s",
                         volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
@@ -233,13 +360,12 @@ public class EspaceLibre.VolumesManager : Object {
                             }
                         }
 
-                        var unix_device = volume.get_identifier ("unix-device");
-                        var mount_path = is_mounted ? volume.get_mount ().get_root ().get_path () : "";
-                        var volume_entry = new VolumeEntry (
-                            unix_device, mount_root != null ? mount_root.get_path () : "", fs_type, "", "", "");
+                        string unix_device = volume.get_identifier ("unix-device");
+                        string mount_path = mount_root != null ? mount_root.get_path () : null;
+                        var volume_entry = new VolumeEntry (volume.get_uuid (), unix_device, mount_path, fs_type,
+                            "", "", "");
 
-                        volume_entry.uuid = volume.get_uuid ();
-                        volume_entry.mount = volume.get_mount ();
+                        volume_entry.glib_volume = volume;
                         volume_entry.device_type =
                             partition_rotational_type (volume.get_name (), unix_device.substring (5, 3));
                         if (volume.get_name () != null) {
@@ -326,7 +452,7 @@ public class EspaceLibre.VolumesManager : Object {
                                 continue;
                             }
 
-                            if (current_volume.file_system == device_name && current_volume.mount_point == mount_point) {
+                            if (current_volume.file_system == device_name) {
                                 fs_volume = current_volume;
 
                                 string partition = fs_volume.file_system.split ("/")[2];
@@ -438,9 +564,13 @@ public class EspaceLibre.VolumesManager : Object {
         string[] cat = {"cat", "/sys/block/" + device_name + "/queue/rotational"};
         string[] spawn_env = { };
         string cat_output;
-        string cat_error;
-        GLib.Process.spawn_sync ("/", cat, spawn_env, SpawnFlags.SEARCH_PATH, null, out cat_output, out cat_error);
-        cat_output = cat_output.strip ();
+        string cat_error = "";
+        try {
+            GLib.Process.spawn_sync ("/", cat, spawn_env, SpawnFlags.SEARCH_PATH, null, out cat_output, out cat_error);
+            cat_output = cat_output.strip ();
+        } catch (SpawnError e) {
+            warning ("Error while removing NTFS volume dirty flag: %s", e.message);
+        }
 
         if (cat_output == "0") {
             debug ("%s disk is NOT rotational", device_name);
@@ -476,6 +606,16 @@ public class EspaceLibre.VolumesManager : Object {
                     return UNKNOWN;
                 }
             }
+        }
+    }
+
+    private bool cancel_timeout (ref uint id) {
+        if (id > 0) {
+            Source.remove (id);
+            id = 0;
+            return true;
+        } else {
+            return false;
         }
     }
 }

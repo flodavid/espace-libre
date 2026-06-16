@@ -32,7 +32,9 @@ public class EspaceLibre.MountPointRow : Gtk.Box {
         append (mount_point);
     }
 
-    public void update_mount_point (string mount_point_location) {
+    public void update_mount_point (string? mount_point_location) {
+        if (mount_point_location == null) return;
+
         mount_point.label = mount_point_location;
         mount_point.uri = "file://" + mount_point_location;
         if (mount_point_location == "/home") {
