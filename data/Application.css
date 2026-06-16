@@ -41,3 +41,13 @@ mountPointRow .link:visited  {
   opacity: initial;
   font-size: initial;
 }
+
+headerbar .image-button {
+  border-width: 2.5px;
+  border-color: @accent_color;
+  border-style: solid;
+}
+
+stack .image-button image {
+  -gtk-icon-transform: scale(1.4);
+}

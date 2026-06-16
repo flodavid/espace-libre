@@ -4,7 +4,7 @@
  */
 
 public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
-    private static double GIGA = 1048576.0;
+    private const double GIGA = 1048576.0;
 
     private uint64 _space_size;
     public uint64 space_size {

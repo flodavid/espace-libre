@@ -6,6 +6,7 @@
 public class EspaceLibre.SelectedVolumeView : Gtk.Box {
     private Gtk.Image folder_image;
     private Gtk.Button unmount_eject_button;
+    private Gtk.Button mount_button;
 
     construct {
         var volume_group = new Adw.PreferencesGroup () {
@@ -44,19 +45,20 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         var mount_info = new MountPointRow ();
 
         unmount_eject_button = new Gtk.Button.from_icon_name ("media-eject-symbolic");
+        mount_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic");
+        mount_button.tooltip_text = _("Mount volume/device");
+        var working_spinner = new Gtk.Spinner () {
+            height_request = 28
+        };
 
-        //  var devicerow_provider = new Gtk.CssProvider ();
-        //  unmount_eject_button.get_style_context ().add_provider (devicerow_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-        var working_spinner = new Gtk.Spinner ();
-
-        var unmount_eject_working_stack = new Gtk.Stack () {
+        var mount_eject_working_stack = new Gtk.Stack () {
             margin_start = 6,
             transition_type = Gtk.StackTransitionType.CROSSFADE
         };
 
-        unmount_eject_working_stack.add_child (unmount_eject_button);
-        unmount_eject_working_stack.add_child (working_spinner);
+        mount_eject_working_stack.add_child (unmount_eject_button);
+        mount_eject_working_stack.add_child (mount_button);
+        mount_eject_working_stack.add_child (working_spinner);
 
         orientation = Gtk.Orientation.VERTICAL;
         spacing = 12;
@@ -78,23 +80,37 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
         append (volume_group);
         append (mount_info);
-        append (unmount_eject_working_stack);
+        append (mount_eject_working_stack);
         append (drive_group);
 
         var volumes_manager = VolumesManager.get_default ();
 
         volumes_manager.notify["current-volume"].connect (() => {
             debug ("selected volume changed");
-            working_spinner.stop ();
-            unmount_eject_working_stack.visible_child = unmount_eject_button;
-            unmount_eject_working_stack.visible = false;
+            if (working_spinner.get_spinning ()) {
+                working_spinner.stop ();
+            }
+            mount_eject_working_stack.visible = false;
 
             if (volumes_manager.current_volume != null) {
                 unmount_eject_button.tooltip_text = volumes_manager.current_volume.can_eject
                     ? _("Eject Device") : _("Unmount Volume");
 
-                if (volumes_manager.current_volume.can_eject || volumes_manager.current_volume.can_unmount) {
-                    unmount_eject_working_stack.visible = true;
+                if (!volumes_manager.current_volume.is_system ()
+                    && (!volumes_manager.current_volume.mounted
+                     || volumes_manager.current_volume.can_eject
+                     || volumes_manager.current_volume.can_unmount)) {
+                    mount_eject_working_stack.visible = true;
+                }
+
+                if (volumes_manager.current_volume.mounted) {
+                    mount_eject_working_stack.visible_child = unmount_eject_button;
+                } else {
+                    if (volumes_manager.current_volume.volume.can_mount ()) {
+                        mount_eject_working_stack.visible_child = mount_button;
+                    } else {
+                        mount_eject_working_stack.visible = false;
+                    }
                 }
 
                 partition_label.subtitle = volumes_manager.current_volume.label != null
@@ -112,12 +128,23 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
         unmount_eject_button.clicked.connect (() => {
             working_spinner.start ();
-            unmount_eject_working_stack.visible_child = working_spinner;
-            
+            mount_eject_working_stack.visible_child = working_spinner;
+
             volumes_manager.unmount_current.begin ((obj, res) => {
                 working_spinner.stop ();
-                unmount_eject_working_stack.visible_child = unmount_eject_button;
-                unmount_eject_working_stack.visible = false;
+                mount_eject_working_stack.visible_child = mount_button;
+
+                volumes_manager.unmount_current.end (res);
+            });
+        });
+
+        mount_button.clicked.connect (() => {
+            working_spinner.start ();
+            mount_eject_working_stack.visible_child = working_spinner;
+            
+            volumes_manager.mount_current.begin ((obj, res) => {
+                working_spinner.stop ();
+                mount_eject_working_stack.visible_child = unmount_eject_button;
 
                 volumes_manager.unmount_current.end (res);
             });
