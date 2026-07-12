@@ -41,6 +41,7 @@ public class EspaceLibre.VolumesManager : Object {
         info ("Remove and rescan volumes");
 
         volumes.remove_all();
+        // volumes.splice (0, volumes.get_n_items (), new_volumes);
 
         add_volumes_from_fstab ();
         add_volumes_from_volume_monitor ();
@@ -61,13 +62,13 @@ public class EspaceLibre.VolumesManager : Object {
         if (current_volume != null && current_volume.mounted && current_volume.glib_volume != null
             && current_volume.glib_volume.get_mount () != null
         ) {
-            unmount_mount.begin (current_volume.glib_volume.get_mount (), (obj, res) => {
-                unmount_mount.end (res);
+            bool success = yield unmount_mount (current_volume.glib_volume.get_mount ());
+            if (success) {
                 refresh ();
                 current_volume.mounted = false;
                 current_volume = current_volume;
-            });
-            return true;
+            }
+            return success;
         }
         return false;
     }
@@ -83,7 +84,6 @@ public class EspaceLibre.VolumesManager : Object {
         }
 
         bool res = yield mount_volume (current_volume);
-
         return res;
     }
 
@@ -182,7 +182,7 @@ public class EspaceLibre.VolumesManager : Object {
                 warning ("Failed to get information about the volume [%s] to be able to mount it", volume.file_system);
             }
         } catch (Error e) {
-            warning ("Failure when trying to mount. %s\nIf mount location is known, another method will be tried",
+            info ("Failure when trying to mount. %s\nIf mount location is known, another method will be tried",
                 e.message);
             if (e is IOError.ALREADY_MOUNTED) {
                 debug ("Already mounted %s", volume.file_system);

@@ -25,7 +25,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         end_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
         end_header.pack_end (end_window_controls);
 
-        var selected_volume_view = new SelectedVolumeView () {
+        var selected_volume_view = new SelectedVolumeView (this) {
             margin_top = 12,
             margin_end = 12,
             margin_bottom = 24,

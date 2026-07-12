@@ -20,6 +20,7 @@ public class EspaceLibre.VolumeEntry : Object {
     public uint64 kb_used { get; set; default = 0; }
     public uint64 kb_avail { get; set; default = 0; }
     public Volume? glib_volume { get; set; default = null; }
+    public bool has_failed_to_mount { get; set; }
 
     public virtual bool can_unmount {
         get {
@@ -45,6 +46,7 @@ public class EspaceLibre.VolumeEntry : Object {
     construct {
         mounted = false;
         device_type = UNKNOWN;
+        has_failed_to_mount = false;
     }
 
     // TODO add distinction between system dirs that need some free space to be able to expand and others that do not
@@ -78,6 +80,10 @@ public class EspaceLibre.VolumeEntry : Object {
         }
 
         return icon_paint;
+    }
+
+    public bool is_ntfs_partition () {
+        return fs_type ==  "ntfs3" || fs_type ==  "ntfs3";
     }
 }
 

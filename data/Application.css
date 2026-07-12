@@ -48,6 +48,6 @@ headerbar .image-button {
   border-style: solid;
 }
 
-stack .image-button image {
+stack > .image-button > image, stack + revealer > .image-button > image {
   -gtk-icon-transform: scale(1.4);
 }
