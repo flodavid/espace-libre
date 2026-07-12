@@ -10,10 +10,9 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
     private Gtk.Spinner working_spinner;
     private Gtk.Button unmount_eject_button;
     private Gtk.Box mount_actions_box;
-    private Gtk.Button mount_button;
     private Gtk.Revealer unlock_volume_revealer;
 
-    public SelectedVolumeView (Gtk.Window parent) {
+    public SelectedVolumeView (Gtk.Window parent_window) {
         orientation = Gtk.Orientation.VERTICAL;
         spacing = 12;
 
@@ -56,13 +55,42 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         var mount_info = new MountPointRow ();
 
         /* Mount/unmount button and force unmount button depending on the volume status */
-        unmount_eject_button = new Gtk.Button.from_icon_name ("media-eject-symbolic");
-
-        mount_actions_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 18) {
-            homogeneous = true
+        unmount_eject_button = new Gtk.Button () {
+            halign = Gtk.Align.CENTER
         };
-        mount_button = new Gtk.Button.from_icon_name ("media-playback-start-symbolic");
+        unmount_eject_button.tooltip_text = _("Mount volume/device");
+        var unmount_eject_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        unmount_eject_button_box.append (new Gtk.Image.from_icon_name ("media-eject-symbolic"));
+        unmount_eject_button_box.append (new Gtk.Label ("Unmount"));
+        unmount_eject_button.set_child (unmount_eject_button_box);
+
+        var mount_button = new Gtk.Button () {
+            halign = Gtk.Align.CENTER
+        };
         mount_button.tooltip_text = _("Mount volume/device");
+        var mount_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        mount_button_box.append (new Gtk.Image.from_icon_name ("media-playback-start-symbolic"));
+        mount_button_box.append (new Gtk.Label ("Mount"));
+        mount_button.set_child (mount_button_box);
+
+        Gtk.Button unlock_volume_button = new Gtk.Button () {
+            halign = Gtk.Align.CENTER
+        };
+        unlock_volume_button.tooltip_text = _("Ignore NTFS errors on the volume (by forcing dirty flag clearing)");
+        var unlock_volume_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        unlock_volume_button_box.append (new Gtk.Image.from_icon_name ("changes-allow"));
+        unlock_volume_button_box.append (new Gtk.Label (_("Clear errors")));
+        unlock_volume_button.set_child (unlock_volume_button_box);
+        unlock_volume_revealer = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
+            child = unlock_volume_button,
+        };
+
+        mount_actions_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10) {
+            halign = Gtk.Align.CENTER
+        };
+        mount_actions_box.append(mount_button);
+
         working_spinner = new Gtk.Spinner () {
             height_request = 28
         };
@@ -75,13 +103,6 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         mount_eject_working_stack.add_child (unmount_eject_button);
         mount_eject_working_stack.add_child (mount_actions_box);
         mount_eject_working_stack.add_child (working_spinner);
-        
-        Gtk.Button unlock_volume_button = new Gtk.Button.from_icon_name ("changes-allow");
-        unlock_volume_button.tooltip_text = _("Force ignore NTFS errors on the volume");
-        unlock_volume_revealer = new Gtk.Revealer () {
-            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
-            child = unlock_volume_button,
-        };
 
         /* Drive information */
         var drive_group = new Adw.PreferencesGroup () {
@@ -120,7 +141,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         });
 
         unlock_volume_button.clicked.connect (() => {
-            clear_dirty_ntfs_volume (parent);
+            clear_dirty_ntfs_volume (parent_window);
         });
     }
 
@@ -183,7 +204,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
             working_spinner.stop ();
             if (success) {
-                mount_eject_working_stack.visible_child = mount_button;
+                mount_eject_working_stack.visible_child = mount_actions_box;
             } else {
                 mount_eject_working_stack.visible_child = unmount_eject_button;
             }
@@ -203,7 +224,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                 mount_eject_working_stack.visible_child = unmount_eject_button;
                 volumes_manager.refresh ();
             } else {
-                mount_eject_working_stack.visible_child = mount_button;
+                mount_eject_working_stack.visible_child = mount_actions_box;
                 volumes_manager.current_volume.has_failed_to_mount = true;
                 check_if_show_unlock_volume ();
             }
@@ -270,7 +291,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                             while (output_stream.gets (buf) != null) {
                                 ntfsfix_output += (string) buf;
                             }
-                            print ("ntfsfix output: %s\n", ntfsfix_output);
+                            debug ("ntfsfix output: %s", ntfsfix_output);
                         }
 
                         FileStream error_stream = GLib.FileStream.fdopen (standard_error, "r");
@@ -282,7 +303,6 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                             warning ("ntfsfix error: %s", ntfsfix_error);
                         }
 
-                        unmount_eject_current_volume ();
                     });
 
                     // Remove the clear dirty NTFS button
@@ -291,8 +311,9 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                 } catch (SpawnError e) {
                     warning ("Error while removing NTFS volume dirty flag: %s", e.message);
                 }
+            } else {
+                mount_eject_working_stack.visible_child = mount_actions_box;
             }
         });
-        //  confirmation_window.show (parent_window);
     }
 }

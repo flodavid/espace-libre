@@ -104,6 +104,6 @@ public class EspaceLibre.VolumeRow : Granite.Bin {
     }
 
     private void update_fs_type (Object self, GLib.ParamSpec spec) {
-        print ("update FS type of %s to: %s\n", _partition_object.label, _partition_object.fs_type);
+        debug ("update FS type of %s to: %s\n", _partition_object.label, _partition_object.fs_type);
     }
 }
