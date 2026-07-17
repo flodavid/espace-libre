@@ -235,11 +235,16 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
      * Show button to ask for dirty flag removal on NTFS volumes that failed to mount
      */
     private void check_if_show_unlock_volume () {
-        if (volumes_manager.current_volume.is_ntfs_partition () && volumes_manager.current_volume.has_failed_to_mount
-            && !unlock_volume_revealer.reveal_child
-        ) {
-            mount_actions_box.append (unlock_volume_revealer);
-            unlock_volume_revealer.reveal_child = true;
+        if (volumes_manager.current_volume.is_ntfs_partition () && volumes_manager.current_volume.has_failed_to_mount) {
+            if (!unlock_volume_revealer.reveal_child) {
+                mount_actions_box.append (unlock_volume_revealer);
+                unlock_volume_revealer.reveal_child = true;
+            }
+        } else {
+            unlock_volume_revealer.reveal_child = false;
+            if (unlock_volume_revealer.get_parent () == mount_actions_box){
+                mount_actions_box.remove (unlock_volume_revealer);
+            }
         }
     }
 
@@ -247,27 +252,20 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         working_spinner.start ();
         mount_eject_working_stack.visible_child = working_spinner;
 
-        //  var confirmation_window = new Adw.AlertDialog (_("Are you sure ?"),
-        //      _("This will force to ignore potential errors with the NTFS partition.") + "\n"
-        //      + _("It is advised to run check the disk from Windows."));
-        //  confirmation_window.add_responses ("cancel",  _("Cancel"), "yes", _("Yes"), null);
-        //  confirmation_window.show (parent_window);
-
-        //  var confirmation_window = new Adw.MessageDialog (parent_window, _("Are you sure ?"),
-        //      _("This will force to ignore potential errors with the NTFS partition.") + "\n"
-        //      + _("It is advised to run check the disk from Windows."));
         var confirmation_window = new Granite.MessageDialog.with_image_from_icon_name (_("Are you sure ?"),
-            _("This will force to ignore potential errors with the NTFS partition.") + "\n"
-            + _("It is advised to run check the disk from Windows."),
-            "dialog-warning", Gtk.ButtonsType.YES_NO);
-        //  confirmation_window.add_responses ("cancel",  _("Cancel"), "yes", _("Yes"), null);
-        //  confirmation_window.set_close_response ("cancel");
-        //  confirmation_window.set_response_appearance ("cancel", Adw.ResponseAppearance.SUGGESTED);
-        //  confirmation_window.set_response_appearance ("yes", Adw.ResponseAppearance.DESTRUCTIVE);
+            _("This will ignore potential errors with the NTFS partition.") + "\n"
+            + _("It is advised to run disk checking (chkdsk) from Windows."),
+            "dialog-warning", Gtk.ButtonsType.CANCEL);
+        confirmation_window.set_transient_for(parent_window);
+        var yes_button = confirmation_window.add_button (_("Ignore the risks"), Gtk.ResponseType.YES);
+        yes_button.add_css_class (Granite.STYLE_CLASS_DESTRUCTIVE_ACTION);
+        confirmation_window.set_default_response(Gtk.ResponseType.CANCEL);
         confirmation_window.present ();
+
         confirmation_window.response.connect ((response) => {
-            //  if (response == "yes") {
-            if (response == Gtk.ResponseType.YES) {            
+            confirmation_window.destroy ();
+
+            if (response == Gtk.ResponseType.YES) {
                 try {
                     string[] ntfsfix = {"pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
                     string[] spawn_env = Environ.get ();
@@ -307,13 +305,14 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
                     // Remove the clear dirty NTFS button
                     volumes_manager.current_volume.has_failed_to_mount = false;
-                    check_if_show_unlock_volume ();
                 } catch (SpawnError e) {
                     warning ("Error while removing NTFS volume dirty flag: %s", e.message);
                 }
-            } else {
-                mount_eject_working_stack.visible_child = mount_actions_box;
             }
+
+            working_spinner.stop ();
+            mount_eject_working_stack.visible_child = mount_actions_box;
+            check_if_show_unlock_volume ();
         });
     }
 }
