@@ -8,12 +8,12 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
     public const string ACTION_OPEN = "action-open";
 
     private VolumesView volumes_view;
-    private VolumesManager volumes_manager;
+    private Gtk.Paned paned;
+    private Gtk.Revealer selected_volume_revealer;
 
     construct {
         // volumes_view and selected_volume_view must be created before reading fstab and df command
         volumes_view = new VolumesView ();
-        volumes_manager = VolumesManager.get_default ();
 
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 
@@ -40,26 +40,17 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         var selected_volume_handle = new Gtk.WindowHandle () {
             child = selected_volume
         };
-        var selected_volume_revealer = new Gtk.Revealer () {
+        selected_volume_revealer = new Gtk.Revealer () {
             transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
             child = selected_volume_handle
         };
 
-        var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
+        paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             start_child = volumes_view,
             resize_end_child = false,
             shrink_end_child = false,
             shrink_start_child = false
         };
-        volumes_manager.notify["current-volume"].connect (() => {
-            if (volumes_manager.current_volume != null) {
-                paned.end_child = selected_volume_revealer;
-                selected_volume_revealer.reveal_child = true;
-            } else {
-                paned.end_child = null;
-                selected_volume_revealer.reveal_child = false;
-            }
-        });
 
         child = paned;
 
@@ -71,12 +62,15 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
 
         var settings = new Settings ("fr.flodavid.espaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
-
-        volumes_manager.refresh ();
     }
 
-    public void start_refresh () {
-        volumes_manager.refresh ();
+    public void reveal_current_volume_pane () {
+        paned.end_child = selected_volume_revealer;
+        selected_volume_revealer.reveal_child = true;
     }
 
+    public void hide_current_volume_pane () {
+        paned.end_child = null;
+        selected_volume_revealer.reveal_child = false;
+    }
 }

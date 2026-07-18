@@ -22,10 +22,10 @@ config_file = configure_file(
 adw_dep = dependency('libadwaita-1', version: '>=1.4.0')
 gtk_dep = dependency('gtk4')
 # Granite.Bin and Granite.MessageDialog
-granite_dep = dependency('granite-7', version: '>=7.7.0')
+#granite_dep = dependency('granite-7', version: '>=7.7.0')
 # GRANITE < 7.7
-#granite_dep = dependency('granite-7', version: '>=7.6.0')
-#add_project_arguments('--define=GRANITE_7_6_OR_LOWER', language: 'vala')
+granite_dep = dependency('granite-7', version: '>=7.6.0')
+add_project_arguments('--define=GRANITE_7_6_OR_LOWER', language: 'vala')
 
 # For Flatpak only:
 add_project_arguments('--define=IS_FLATPAK', language: 'vala')

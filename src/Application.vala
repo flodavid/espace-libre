@@ -13,6 +13,8 @@ public class EspaceLibre.Application : Gtk.Application {
         { ACTION_QUIT, quit }
     };
 
+    private VolumesManager? volumes_manager = null;
+
     public Application () {
         Object (
             application_id: "fr.flodavid.espaceLibre",
@@ -31,6 +33,8 @@ public class EspaceLibre.Application : Gtk.Application {
         base.startup ();
 
         Granite.init ();
+
+        volumes_manager = VolumesManager.get_default ();
 
         add_action_entries (ACTION_ENTRIES, this);
 
@@ -69,6 +73,8 @@ public class EspaceLibre.Application : Gtk.Application {
 
         add_window (main_window);
 
+        volumes_manager.refresh ();
+
         /*
         * This is very finicky. Bind size after present else set_titlebar gives us bad sizes
         * Set maximize after height/width else window is min size on unmaximize
@@ -83,6 +89,14 @@ public class EspaceLibre.Application : Gtk.Application {
         }
 
         settings.bind ("window-maximized", main_window, "maximized", SettingsBindFlags.SET);
+
+        volumes_manager.notify["current-volume"].connect (() => {
+            if (volumes_manager.current_volume != null) {
+                main_window.reveal_current_volume_pane ();
+            } else {
+                main_window.hide_current_volume_pane ();
+            }
+        });
     }
 
     public static int main (string[] args) {
@@ -90,6 +104,6 @@ public class EspaceLibre.Application : Gtk.Application {
     }
 
     private void action_refresh () {
-        ((MainWindow)active_window).start_refresh ();
+        volumes_manager.refresh ();
     }
 }
