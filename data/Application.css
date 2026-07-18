@@ -42,14 +42,10 @@ mountPointRow .link:visited  {
   font-size: initial;
 }
 
-headerbar .image-button {
+headerbar .image-button.highlighted {
   border-width: 2.5px;
   border-color: @accent_color;
   border-style: solid;
-}
-
-stack > .image-button > image, stack + revealer > .image-button > image {
-  -gtk-icon-transform: scale(1.4);
 }
 
 window.dialog image {

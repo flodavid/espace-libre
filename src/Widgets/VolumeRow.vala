@@ -60,8 +60,10 @@ public class EspaceLibre.VolumeRow : Granite.Bin {
             hexpand = false,
             xalign = 0
         };
-        mount_point.add_css_class (Granite.CssClass.DIM);
-        mount_point.add_css_class (Granite.CssClass.SMALL);
+        #if ! GRANITE_7_6_OR_LOWER
+            mount_point.add_css_class (Granite.CssClass.DIM);
+            mount_point.add_css_class (Granite.CssClass.SMALL);
+        #endif
         labels_size_group.add_widget (mount_point);
 
         space_bar = new UsedSpaceBar ();

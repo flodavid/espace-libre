@@ -40,6 +40,9 @@ public class EspaceLibre.Application : Gtk.Application {
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
 
+        #if IS_FLATPAK
+            gtk_settings.gtk_theme_name = "elementary";
+        #endif
         gtk_settings.gtk_icon_theme_name = "elementary";
 
         gtk_settings.gtk_application_prefer_dark_theme = (

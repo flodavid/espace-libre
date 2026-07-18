@@ -13,6 +13,17 @@ You'll need the following dependencies:
 * meson
 * valac
 
+If your version of Granite is inferior to 7.7, in [meson.build](./meson.build),
+comment the line above `# GRANITE < 7.7`, and uncomment the two lines below.
+
+## Flatpak
+
+`sudo flatpak-builder --install-deps-from=flathub --ccache --install flatpak-build fr.flodavid.espaceLibre.yml`
+
+## Ninja
+
+In [meson.build](./meson.build), uncomment the line below `# For Flatpak only:`.
+
 It's recommended to create a clean build environment.
 Run `meson` to configure the build environment and then `ninja` to build
 

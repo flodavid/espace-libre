@@ -22,6 +22,7 @@ public class EspaceLibre.VolumesView : Granite.Bin {
             action_name = Application.ACTION_PREFIX + Application.ACTION_REFRESH,
             tooltip_text = _("Refresh")
         };
+        refresh_button.add_css_class ("highlighted");
 
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 

@@ -73,10 +73,12 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
             valign = CENTER,
             hexpand = true
         };
-        // Avoid using accent color if it is too to red/orange
-        if (Granite.Settings.get_default ().accent_color.red < 0.9) {
-            filled_bar.add_css_class ("colored_bar");
-        }
+        #if ! GRANITE_7_6_OR_LOWER
+            // Avoid using accent color if it is too to red/orange
+            if (Granite.Settings.get_default ().accent_color.red < 0.9) {
+                filled_bar.add_css_class ("colored_bar");
+            }
+        #endif
         free_space_percent_label = new Gtk.Label ("--%") {
             visible = false,
             ellipsize = Pango.EllipsizeMode.MIDDLE,

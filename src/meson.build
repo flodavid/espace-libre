@@ -1,13 +1,13 @@
 sources = [
     'Application.vala',
-    'VolumeEntry.vala',
     'MainWindow.vala',
+    'VolumeEntry.vala',
     'VolumesManager.vala',
     'Views/SelectedVolumeView.vala',
     'Views/VolumesView.vala',
-    'Widgets/VolumeRow.vala',
     'Widgets/MountPointRow.vala',
     'Widgets/UsedSpaceBar.vala',
+    'Widgets/VolumeRow.vala',
 ]
 
 executable(
