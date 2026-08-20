@@ -60,7 +60,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         };
         set_titlebar (null_title);
 
-        var settings = new Settings ("fr.flodavid.espaceLibre");
+        var settings = new Settings ("fr.flodavid.EspaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
     }
 

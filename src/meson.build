@@ -11,8 +11,8 @@ sources = [
 ]
 
 executable(
-    meson.project_name(),
-    gresource,
+    'espacelibre',
+    gresources,
     sources,
     config_file,
     dependencies: dependencies,

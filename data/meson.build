@@ -1,17 +1,17 @@
-gresource = gnome.compile_resources(
-    'espaceLibre-resources',
-    'espaceLibre.gresource.xml',
+gresources = gnome.compile_resources(
+    'EspaceLibre-resources',
+    'EspaceLibre.gresource.xml',
     source_dir: join_paths(meson.project_source_root(), 'data')
 )
 
 install_data(
-    'espaceLibre.gschema.xml',
+    'EspaceLibre.gschema.xml',
     install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
     rename: meson.project_name() + '.gschema.xml'
 )
 
 i18n.merge_file(
-    input: 'espaceLibre.desktop.in',
+    input: 'EspaceLibre.desktop.in',
     output: meson.project_name() + '.desktop',
     po_dir: join_paths(meson.project_source_root(), 'po', 'extra'),
     type: 'desktop',
@@ -20,7 +20,7 @@ i18n.merge_file(
 )
 
 i18n.merge_file(
-    input: 'espaceLibre.metainfo.xml.in',
+    input: 'EspaceLibre.metainfo.xml.in',
     output: meson.project_name() + '.metainfo.xml',
     po_dir: meson.project_source_root() / 'po' / 'extra',
     type: 'xml',

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=1.5
+Version=1.0
 Type=Application
 
 Name=Espace Libre
@@ -7,8 +7,8 @@ Comment=Visualise partition size and free space
 Categories=Utility;GTK;
 Keywords=Disk;Space;Libre;
 
-Icon=fr.flodavid.espaceLibre
-Exec=fr.flodavid.espaceLibre %U
+Icon=fr.flodavid.EspaceLibre
+Exec=espacelibre
 SingleMainWindow=true
 StartupNotify=true
 Terminal=false

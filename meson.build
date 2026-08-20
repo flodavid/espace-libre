@@ -1,5 +1,5 @@
 project(
-  'fr.flodavid.espaceLibre',
+  'fr.flodavid.EspaceLibre',
   'vala', 'c',
   version: '1.0.0',
   meson_version: '>=0.58.0'

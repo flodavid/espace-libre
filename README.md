@@ -20,7 +20,11 @@ uncomment the line above `# GRANITE < 7.7`, and comment the two lines below.
 
 ## Flatpak
 
-`sudo flatpak-builder --install-deps-from=flathub --ccache --install flatpak-build fr.flodavid.espaceLibre.yml`
+```shell
+flatpak-builder --install-deps-from=flathub --ccache flatpak-build fr.flodavid.Espacelibre.yml
+flatpak build-bundle espaceLibreRepo fr.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo fr.flodavid.EspaceLibre daily
+flatpak install fr.flodavid.EspaceLibre.flatpak
+```
 
 ## Ninja
 
@@ -33,7 +37,7 @@ Run `meson` to configure the build environment and then `ninja` to build
     cd build
     ninja
 
-To install, use `ninja install`, then execute with `fr.flodavid.espaceLibre`
+To install, use `ninja install`, then execute with `fr.flodavid.espacelibre`
 
     ninja install
-    fr.flodavid.espaceLibre
+    fr.flodavid.espacelibre

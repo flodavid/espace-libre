@@ -43,7 +43,7 @@ mountPointRow .link:visited  {
 }
 
 headerbar .image-button.highlighted {
-  border-width: 2.5px;
+  border-width: 3.5px;
   border-color: @accent_color;
   border-style: solid;
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2026 flodavid -->
 <component type="desktop-application">
-  <id>fr.flodavid.espaceLibre</id>
-  <launchable type="desktop-id">fr.flodavid.espaceLibre.desktop</launchable>
-  <translation type="gettext">fr.flodavid.espaceLibre</translation>
+  <id>fr.flodavid.EspaceLibre</id>
+  <launchable type="desktop-id">fr.flodavid.EspaceLibre.desktop</launchable>
+  <translation type="gettext">fr.flodavid.EspaceLibre</translation>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-only</project_license>
 
@@ -33,7 +33,7 @@
   <content_rating type="oars-1.1" />
 
   <provides>
-    <binary>fr.flodavid.espaceLibre</binary>
+    <binary>espacelibre</binary>
   </provides>
 
   <recommends>

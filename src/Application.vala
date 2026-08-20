@@ -17,7 +17,7 @@ public class EspaceLibre.Application : Gtk.Application {
 
     public Application () {
         Object (
-            application_id: "fr.flodavid.espaceLibre",
+            application_id: "fr.flodavid.EspaceLibre",
             flags: ApplicationFlags.HANDLES_OPEN
         );
     }
@@ -80,7 +80,7 @@ public class EspaceLibre.Application : Gtk.Application {
         * Set maximize after height/width else window is min size on unmaximize
         * Bind maximize as SET else get get bad sizes
         */
-        var settings = new Settings ("fr.flodavid.espaceLibre");
+        var settings = new Settings ("fr.flodavid.EspaceLibre");
         settings.bind ("window-height", main_window, "default-height", SettingsBindFlags.DEFAULT);
         settings.bind ("window-width", main_window, "default-width", SettingsBindFlags.DEFAULT);
 

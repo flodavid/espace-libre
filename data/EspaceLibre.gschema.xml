@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema path="/fr/flodavid/espaceLibre/" id="fr.flodavid.espaceLibre">
+  <schema path="/fr/flodavid/EspaceLibre/" id="fr.flodavid.EspaceLibre">
     <key name="window-height" type="i">
       <default>475</default>
       <summary>Most recent window height</summary>

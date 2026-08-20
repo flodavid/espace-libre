@@ -1,4 +1,6 @@
 *~
+*.flatpak
 .flatpak-builder
-.flatpak
+espaceLibreRepo
+build-flatpak
 build
