@@ -5,7 +5,6 @@
 
 public class EspaceLibre.SelectedVolumeView : Gtk.Box {
     private unowned VolumesManager volumes_manager;
-    private Gtk.Image folder_image;
     private Gtk.Stack mount_eject_working_stack;
     private Gtk.Spinner working_spinner;
     private Gtk.Button unmount_eject_button;
@@ -89,7 +88,8 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         mount_actions_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10) {
             halign = Gtk.Align.CENTER
         };
-        mount_actions_box.append(mount_button);
+        mount_actions_box.append (mount_button);
+        mount_actions_box.append (unlock_volume_revealer);
 
         working_spinner = new Gtk.Spinner () {
             height_request = 28
@@ -235,16 +235,10 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
      * Show button to ask for dirty flag removal on NTFS volumes that failed to mount
      */
     private void check_if_show_unlock_volume () {
-        if (volumes_manager.current_volume.is_ntfs_partition () && volumes_manager.current_volume.has_failed_to_mount) {
-            if (!unlock_volume_revealer.reveal_child) {
-                mount_actions_box.append (unlock_volume_revealer);
-                unlock_volume_revealer.reveal_child = true;
-            }
+        if (volumes_manager.current_volume.is_ntfs_partition () && volumes_manager.current_volume.has_failed_to_mount == true) {                
+            unlock_volume_revealer.reveal_child = true;
         } else {
             unlock_volume_revealer.reveal_child = false;
-            if (unlock_volume_revealer.get_parent () == mount_actions_box){
-                mount_actions_box.remove (unlock_volume_revealer);
-            }
         }
     }
 
@@ -267,7 +261,11 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
             if (response == Gtk.ResponseType.YES) {
                 try {
-                    string[] ntfsfix = {"pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
+                    #if IS_FLATPAK
+                        string[] ntfsfix = {"flatpak-spawn", "--host", "pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
+                    #else
+                        string[] ntfsfix = {"pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
+                    #endif
                     string[] spawn_env = Environ.get ();
                     int standard_output;
                     int standard_error;
@@ -280,6 +278,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                     ChildWatch.add (child_pid, (pid, status) => {
                         // Triggered when the child indicated by child_pid exits
                         Process.close_pid (pid);
+                        // status: Success=0, Failure=111111000000000
 
                         char buf[100];
 
@@ -298,13 +297,17 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                             while (error_stream.gets (buf) != null) {
                                 ntfsfix_error += (string) buf;
                             }
-                            warning ("ntfsfix error: %s", ntfsfix_error);
+                           
+                            if (ntfsfix_error.length > 0) {
+                                warning ("ntfsfix invocation error: %s", ntfsfix_error);
+                                return;
+                            }
                         }
 
+                        // Remove the clear dirty NTFS button
+                        volumes_manager.current_volume.has_failed_to_mount = false;
+                        unlock_volume_revealer.reveal_child = false;
                     });
-
-                    // Remove the clear dirty NTFS button
-                    volumes_manager.current_volume.has_failed_to_mount = false;
                 } catch (SpawnError e) {
                     warning ("Error while removing NTFS volume dirty flag: %s", e.message);
                 }
