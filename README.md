@@ -14,21 +14,20 @@ You'll need the following dependencies:
 * meson
 * valac
 
-If your version of Granite is 7.7 or later you can activate accent color usage
-for bars and better text style for volume rows. In [meson.build](./meson.build),
-uncomment the line above `# GRANITE < 7.7`, and comment the two lines below.
+*Note:* If your version of Granite is 7.7 or later, accent color will be used for
+bars and text style will be better for volume rows.
 
-## Flatpak
+### Flatpak
 
 ```shell
-flatpak-builder --install-deps-from=flathub --ccache flatpak-build fr.flodavid.Espacelibre.yml
+flatpak-builder --install-deps-from=flathub --ccache flatpak-build fr.flodavid.EspaceLibre.yml
 flatpak build-bundle espaceLibreRepo fr.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo fr.flodavid.EspaceLibre daily
 flatpak install fr.flodavid.EspaceLibre.flatpak
 ```
 
-## Ninja
+### Ninja
 
-In [meson.build](./meson.build), uncomment the line below `# For Flatpak only:`.
+In [meson.build](./meson.build), comment the line below `# For Flatpak only:`.
 
 It's recommended to create a clean build environment.
 Run `meson` to configure the build environment and then `ninja` to build

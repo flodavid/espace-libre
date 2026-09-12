@@ -252,7 +252,11 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             "dialog-warning", Gtk.ButtonsType.CANCEL);
         confirmation_window.set_transient_for(parent_window);
         var yes_button = confirmation_window.add_button (_("Ignore the risks"), Gtk.ResponseType.YES);
-        yes_button.add_css_class (Granite.STYLE_CLASS_DESTRUCTIVE_ACTION);
+        #if GRANITE_7_6_OR_LOWER
+            yes_button.add_css_class (Granite.STYLE_CLASS_DESTRUCTIVE_ACTION);
+        #else
+            yes_button.add_css_class (Granite.CssClass.DESTRUCTIVE);        
+        #endif
         confirmation_window.set_default_response(Gtk.ResponseType.CANCEL);
         confirmation_window.present ();
 

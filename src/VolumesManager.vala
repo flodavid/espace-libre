@@ -295,7 +295,7 @@ public class EspaceLibre.VolumesManager : Object {
                                 fs_volume.label = label;
                             }
 
-                            info ("add volume: %s\n", fs_volume.file_system);
+                            info ("add volume: %s", fs_volume.file_system);
                             volumes.append (fs_volume);
                         } else {
                             warning ("Partition [%s] is not 'real', do not add it", file_system);
@@ -333,7 +333,7 @@ public class EspaceLibre.VolumesManager : Object {
                         volume.get_name (), volume.get_identifier ("unix-device"), volume.get_identifier ("label"));
 
                     try {
-                        GLib.FileInfo info = null;
+                        GLib.FileInfo filesystem_info = null;
                         bool is_mounted;
                         File mount_root;
                         uint64 kb_size = 0;
@@ -347,16 +347,16 @@ public class EspaceLibre.VolumesManager : Object {
                             is_mounted = false;
                             mount_root = volume.get_activation_root ();
                         }
-                        info = mount_root != null ? mount_root.query_filesystem_info ("filesystem::*") : null;
-                        if (info != null) {
-                            if (info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
-                                kb_size = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
+                        filesystem_info = mount_root != null ? mount_root.query_filesystem_info ("filesystem::*") : null;
+                        if (filesystem_info != null) {
+                            if (filesystem_info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
+                                kb_size = filesystem_info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
                             }
-                            if (info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
-                                kb_avail = info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
+                            if (filesystem_info.has_attribute (FileAttribute.FILESYSTEM_FREE)) {
+                                kb_avail = filesystem_info.get_attribute_uint64 (FileAttribute.FILESYSTEM_FREE) / 1024;
                             }
-                            if (info.has_attribute (FileAttribute.FILESYSTEM_TYPE)) {
-                                fs_type = info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
+                            if (filesystem_info.has_attribute (FileAttribute.FILESYSTEM_TYPE)) {
+                                fs_type = filesystem_info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
                             }
                         }
 
@@ -372,7 +372,7 @@ public class EspaceLibre.VolumesManager : Object {
                             volume_entry.label = volume.get_name ();
                         }
 
-                        print ("add volume: %s\n", volume_entry.file_system);
+                        info ("add volume: %s", volume_entry.file_system);
                         volumes.append (volume_entry);
                     } catch (GLib.Error error) {
                         if (!(error is IOError.CANCELLED)) {

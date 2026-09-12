@@ -5,9 +5,11 @@
 
 levelbar.colored_bar empty {
   background-color: @accent_color;
+  /* background-color: var(--accent_color); TODO wait for Granite 7.6.0 support removal */
 }
 levelbar.colored_bar block.low  {
   background-color: @accent_color;
+  /* background-color: var(--accent_color); TODO wait for Granite 7.6.0 support removal */
 }
 levelbar block.high {
   background-color: orange;
@@ -45,6 +47,7 @@ mountPointRow .link:visited  {
 headerbar .image-button.highlighted {
   border-width: 3.5px;
   border-color: @accent_color;
+  /* border-color: var(--accent_color); TODO wait for Granite 7.6.0 support removal */
   border-style: solid;
 }
 

@@ -15,15 +15,21 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         // volumes_view and selected_volume_view must be created before reading fstab and df command
         volumes_view = new VolumesView ();
 
+        var hide_button = new Gtk.Button.from_icon_name ("pane-hide-symbolic") {
+            // Avoid to underlap pane separator's interactive area
+            margin_start = 10
+        };
         var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 
-        var end_header = new Gtk.HeaderBar () {
+        var controls_header = new Gtk.HeaderBar () {
             show_title_buttons = false,
             title_widget = new Gtk.Label ("")
         };
-        end_header.add_css_class (Granite.STYLE_CLASS_FLAT);
-        end_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
-        end_header.pack_end (end_window_controls);
+        controls_header.add_css_class (Granite.STYLE_CLASS_FLAT);
+        controls_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
+
+        controls_header.pack_start (hide_button);
+        controls_header.pack_end (end_window_controls);
 
         var selected_volume_view = new SelectedVolumeView (this) {
             margin_top = 12,
@@ -34,7 +40,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         };
 
         var selected_volume = new Gtk.Box (VERTICAL, 0);
-        selected_volume.append (end_header);
+        selected_volume.append (controls_header);
         selected_volume.append (selected_volume_view);
 
         var selected_volume_handle = new Gtk.WindowHandle () {
@@ -62,6 +68,8 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
 
         var settings = new Settings ("fr.flodavid.EspaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
+
+        hide_button.clicked.connect (hide_current_volume_pane);
     }
 
     public void reveal_current_volume_pane () {
@@ -72,5 +80,6 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
     public void hide_current_volume_pane () {
         paned.end_child = null;
         selected_volume_revealer.reveal_child = false;
+        volumes_view.unselect_volume ();
     }
 }

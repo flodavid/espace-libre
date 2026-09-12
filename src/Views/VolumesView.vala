@@ -5,8 +5,11 @@
 
 public class EspaceLibre.VolumesView : Granite.Bin {
 
-    private Granite.Placeholder volume_list_placeholder;
     private Gtk.Button refresh_button;
+    private Gtk.WindowControls end_window_controls;
+    private Gtk.HeaderBar volume_list_header;
+    private Granite.Placeholder volume_list_placeholder;
+    private Gtk.SingleSelection selection_model;
     private Gtk.ListView volumes_listview;
     private Gtk.ScrolledWindow scrolled;
     private Gtk.SignalListItemFactory factory;
@@ -24,9 +27,9 @@ public class EspaceLibre.VolumesView : Granite.Bin {
         };
         refresh_button.add_css_class ("highlighted");
 
-        var end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
+        end_window_controls = new Gtk.WindowControls (Gtk.PackType.END);
 
-        var volume_list_header = new Gtk.HeaderBar () {
+        volume_list_header = new Gtk.HeaderBar () {
             show_title_buttons = false,
         };
         volume_list_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
@@ -39,8 +42,9 @@ public class EspaceLibre.VolumesView : Granite.Bin {
             icon = new ThemedIcon ("playlist-queue")
         };
 
-        var selection_model = new Gtk.SingleSelection (volumes_manager.volumes) {
-            autoselect = false
+        selection_model = new Gtk.SingleSelection (volumes_manager.volumes) {
+            autoselect = false,
+            can_unselect = true
         };
         selection_model.items_changed.connect (volumes_manager.on_items_changed);
 
@@ -124,32 +128,26 @@ public class EspaceLibre.VolumesView : Granite.Bin {
             error_toast.send_notification ();
         });
 
-        selection_model.selection_changed.connect (() => {
-            if (selection_model.get_selected_item () != null) {
-                volume_list_header.remove (end_window_controls);
-            } else {
-                volume_list_header.pack_end (end_window_controls);
-            }
+        selection_model.selection_changed.connect (do_selection_changed);
+    }
 
-            // Logic to unselect
-            //  bool before = disks_manager.has_items;
-            //  if (disks_manager.has_items) {
-            //      if (!before) {
-            //          warning("had no items, but now has some");
-            //          disks_manager.current_disk = (DiskEntry) disks_manager.disks.get_item (0);
-            //      } else {
-            //          warning("still some items");
-            //      }
-            //  } else {
-            //      if (before) {
-            //          warning("no more items");
-            //          disks_manager.current_disk = null;
-            //      } else {
-            //          warning("still no items");
-            //      }
-            //  }
+    /// Unselect the corrently selected volume
+    public void unselect_volume () {
+        selection_model.set_selected (-1);
+    }
 
-            volumes_manager.current_volume = (VolumeEntry)selection_model.selected_item;
-        });
+    private void do_selection_changed () {
+        if (selection_model.get_selected_item () != null) {
+            volume_list_header.remove (end_window_controls);
+            // Avoid to underlap pane separator's interactive area
+            refresh_button.set_margin_end (10);
+        } else {
+            volume_list_header.remove (refresh_button);
+            refresh_button.set_margin_end (0);
+            volume_list_header.pack_end (end_window_controls);
+            volume_list_header.pack_end (refresh_button);
+        }
+
+        volumes_manager.current_volume = (VolumeEntry)selection_model.selected_item;
     }
 }
