@@ -36,7 +36,16 @@ Run `meson` to configure the build environment and then `ninja` to build
     cd build
     ninja
 
+#### Debug
+
+After building
+
+    G_MESSAGES_DEBUG=all src/espacelibre
+
+#### Install
+
 To install, use `ninja install`, then execute with `fr.flodavid.espacelibre`
 
     ninja install
     fr.flodavid.espacelibre
+

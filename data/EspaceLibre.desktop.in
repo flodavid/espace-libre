@@ -1,9 +1,9 @@
 [Desktop Entry]
-Version=1.1
+Version=1.0
 Type=Application
 
 Name=Espace Libre
-Comment=Visualise partition size and free space
+Comment=Visualise volumes size and free space. (Un)Mount volumes.
 Categories=Utility;GTK;
 Keywords=Disk;Space;Libre;
 
@@ -12,5 +12,3 @@ Exec=espacelibre
 SingleMainWindow=true
 StartupNotify=true
 Terminal=false
-
-X-GNOME-UsesNotifications=true

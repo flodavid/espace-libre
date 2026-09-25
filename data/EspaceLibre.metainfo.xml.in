@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2026 flodavid -->
 <component type="desktop-application">
   <id>fr.flodavid.EspaceLibre</id>
-  <launchable type="desktop-id">fr.flodavid.EspaceLibre.desktop</launchable>
-  <translation type="gettext">fr.flodavid.EspaceLibre</translation>
-  <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-3.0-only</project_license>
-
+  
   <name>Espace Libre</name>
-  <summary>See space used on your disks</summary>
-  <description>
-    <p>Quickly visualize the space used and available on your storage devices, in a GUI.</p>
-  </description>
-
-  <screenshots>
-    <screenshot environment="pantheon" type="default">
-      <caption>Quickly visualize free disks space</caption>
-      <image>https://TODO.png</image>
-    </screenshot>
-    <screenshot environment="pantheon:dark" type="default">
-      <caption>Quickly visualize free disks space</caption>
-      <image>https://TODO.png</image>
-    </screenshot>
-  </screenshots>
-
+  <summary>Visualize the usage of your volumes or mount/unmount them</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <branding>
     <color type="primary">#f37329</color>
-    <color type="primary" scheme_preference="light">#ffa154</color>
-    <color type="primary" scheme_preference="dark">#cc3b02</color>
+    <color type="primary" scheme_preference="light">#4185f4</color>
+    <color type="primary" scheme_preference="dark">#a0c2f9</color>
   </branding>
 
   <content_rating type="oars-1.1" />
@@ -37,7 +20,7 @@
   </provides>
 
   <recommends>
-    <display_length compare="ge">380</display_length>
+    <display_length compare="ge">430</display_length>
   </recommends>
   <supports>
     <control>pointing</control>
@@ -52,8 +35,61 @@
   </developer>
 
   <releases>
-    <release version="1.0.0" date="2026-07-18" />
-    <release version="1.0.1" date="2026-08-22" />
-    <release version="1.1.0" date="2026-09-12" />
+    <release version="1.0.0" date="2026-07-18" >
+      <description>
+        <p>Initial limited release</p>
+        <ul>
+          <li>Volumes are listed with their total and free space</li>
+          <li>Some details about the disk and volumes are available in the details panel</li>
+          <li>Volumes can be (un)mounted. NTFS volumes are force-mountables of they fail to mount on first try</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.0.1" date="2026-08-22" >
+      <description>
+        <p>Add Flatpak support</p>
+      </description>
+    </release>
+    <release version="1.1.0" date="2026-09-12" >
+      <description>
+        <p>Public release!</p>
+        <ul>
+          <li>Add button to hide the details panel</li>
+        </ul>
+      </description>
+    </release>
   </releases>
+  
+  <description>
+    <p>
+      For those who prefer to avoid using command lines, or who find <code>df</code> output hard to read.
+      Quickly visualize the space used and available on your storage volumes.
+    </p>
+    <p>
+      This simple utility is an alternative to KDiskFree that shows your volumes gives some information about them.
+    </p>
+    <p>
+      It also allows you to mount or unmount volumes. If a NTFS volumes fails to mount, you can ignore the errors and force mounting it (at your own risks).
+    </p>
+    <i>
+      "Espace Libre" is French for "Free Space"
+    </i>
+  </description>
+
+  <launchable type="desktop-id">fr.flodavid.EspaceLibre.desktop</launchable>
+  <translation type="gettext">fr.flodavid.EspaceLibre</translation>
+  <screenshots>
+    <screenshot environment="pantheon" type="default">
+      <caption>Used volumes space represented using filled bars, ligth theme</caption>
+      <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot.png?raw=true</image>
+    </screenshot>
+    <screenshot environment="pantheon" type="default">
+      <caption>Used disks space represented using filled bars, dark theme</caption>
+      <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot-dark.png?raw=true</image>
+    </screenshot>
+    <screenshot environment="pantheon" type="default">
+      <caption>Used disks space represented using filled bars, ligth theme</caption>
+      <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot-details.png?raw=true</image>
+    </screenshot>
+  </screenshots>
 </component>
