@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beatbox 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-22 16:59+0000\n"
+"POT-Creation-Date: 2026-09-25 04:14+0200\n"
 "PO-Revision-Date: 2025-09-10 08:55+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
-"Language-Team: French <https://l10n.elementaryos.org/projects/espacelibre/espacelibre/fr/"
-">\n"
+"Language-Team: French <https://l10n.elementaryos.org/projects/espacelibre/"
+"espacelibre/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,28 +20,162 @@ msgstr ""
 "X-Generator: Weblate 5.11.4\n"
 "X-Launchpad-Export-Date: 2017-03-07 05:52+0000\n"
 
+#: src/Application.vala:70
+msgid "Espace Libre"
+msgstr "À propos de Espace Libre"
 
-#: src/Application.vala:86 src/Views/SelectedDiskView.vala:8
-#: src/Views/SelectedDiskView.vala:52
-msgid "Disk"
+#: src/VolumeEntry.vala:96
+msgid "Hard Drive Disk"
+msgstr "Disque Dur"
+
+#: src/VolumeEntry.vala:98
+msgid "USB Drive"
+msgstr "Stockage USB"
+
+#: src/VolumeEntry.vala:100
+msgid "Optical Disc"
 msgstr "Disque"
 
-#: src/Views/SelectedDiskView.vala:12 src/Views/SelectedDiskView.vala:51
+#: src/VolumeEntry.vala:102
+msgid "NVMe Solid State Drive"
+msgstr "SSD NVMe"
+
+#: src/VolumeEntry.vala:104
+msgid "Solid State Drive"
+msgstr "SSD"
+
+#: src/VolumeEntry.vala:106
+msgid "Unknown type"
+msgstr "Type inconnu"
+
+#: src/Views/SelectedVolumeView.vala:22
+msgid "Volume Details"
+msgstr "Détails du volume"
+
+#: src/Views/SelectedVolumeView.vala:26
+msgid "File System Format"
+msgstr "Format du système de fichiers"
+
+#: src/Views/SelectedVolumeView.vala:27
+msgid "Unknown FS"
+msgstr "Format Inconnu"
+
+#: src/Views/SelectedVolumeView.vala:34
+msgid "Volume Label"
+msgstr "Label du Volume"
+
+#: src/Views/SelectedVolumeView.vala:35
+msgid "Label"
+msgstr "Label"
+
+#: src/Views/SelectedVolumeView.vala:42
+msgid "Partition ID"
+msgstr "ID de la partition"
+
+#: src/Views/SelectedVolumeView.vala:43
+msgid "Partition"
+msgstr "Partition"
+
+#: src/Views/SelectedVolumeView.vala:59 src/Views/SelectedVolumeView.vala:68
+msgid "Mount volume/device"
+msgstr "Monter le volume/périphérique"
+
+#: src/Views/SelectedVolumeView.vala:77
+msgid "Ignore NTFS errors on the volume (by forcing dirty flag clearing)"
+msgstr ""
+"Ignore les erreurs NTFS du volume (en forçant le nettoyage du marqueur "
+"'dirty')"
+
+#: src/Views/SelectedVolumeView.vala:80
+msgid "Clear error flags"
+msgstr "Effacer les marqueurs d'erreurs"
+
+#: src/Views/SelectedVolumeView.vala:108
+msgid "Drive Details"
+msgstr "Détails du Stockage"
+
+#: src/Views/SelectedVolumeView.vala:109
+msgid "Drive Infos"
+msgstr "Informations du Périphérique"
+
+#: src/Views/SelectedVolumeView.vala:113
+msgid "Device Type"
+msgstr "Type de Stockage"
+
+#: src/Views/SelectedVolumeView.vala:114
+msgid "Storage Device Type"
+msgstr "Type de Périphérique de Stockage"
+
+#: src/Views/SelectedVolumeView.vala:160
+msgid "Eject Device"
+msgstr "Éjecter le Périphérique"
+
+#: src/Views/SelectedVolumeView.vala:160
+msgid "Unmount Volume"
+msgstr "Démonter le Volume"
+
+#. Mount point with link
+#: src/Views/SelectedVolumeView.vala:193 src/Widgets/MountPointRow.vala:27
 msgid "Not mounted"
 msgstr "Non monté"
 
-#: src/Views/DisksView.vala:23
+#: src/Views/SelectedVolumeView.vala:248
+msgid "Are you sure ?"
+msgstr "Êtes-vous sûrs ?"
+
+#: src/Views/SelectedVolumeView.vala:249
+msgid "This will ignore potential errors with the NTFS partition."
+msgstr "Ceci ignorera les potentielles erreurs de la partition NTFS."
+
+#: src/Views/SelectedVolumeView.vala:250
+msgid "It is advised to run disk checking (chkdsk) from Windows."
+msgstr ""
+"Il est recommandé d'exécuter la vérification du disque (chkdsk) sous Windows"
+
+#: src/Views/SelectedVolumeView.vala:253
+msgid "Ignore the risks"
+msgstr "Ignorer les risques"
+
+#: src/Views/VolumesView.vala:26
 msgid "Refresh"
 msgstr "Rafraîchir"
 
-#~ msgid "Unknown"
-#~ msgstr "Inconnu"
+#: src/Views/VolumesView.vala:40
+msgid "No volume found"
+msgstr "Aucun volume n'a été trouvé."
+
+#: src/Views/VolumesView.vala:41
+msgid "Mounted volumes should appear here"
+msgstr "Les volumes montés apparaitront ici"
+
+#: src/Views/VolumesView.vala:125
+#, c-format
+msgid "%d invalid volume was not added to the queue"
+msgid_plural "%d invalid volumes were not added to the queue"
+msgstr[0] "%d volume invalide n'a pas été ajouté à la queue"
+msgstr[1] "%d volumes invalides n'ont pas été ajoutés à la queue"
+
+#: src/Widgets/MountPointRow.vala:28
+msgid "Mount Point"
+msgstr "Point de Montage"
+
+#: src/Widgets/UsedSpaceBar.vala:65
+msgid "---GB"
+msgstr "---Go"
+
+#: src/Widgets/UsedSpaceBar.vala:97
+msgid "Free: "
+msgstr "Libre : "
+
+#: src/Widgets/UsedSpaceBar.vala:98 src/Widgets/UsedSpaceBar.vala:99
+msgid "GB"
+msgstr "Go"
+
+#~ msgid "Disk"
+#~ msgstr "Disque"
 
 #~ msgid "Cancel"
 #~ msgstr "Annuler"
-
-#~ msgid "Empty device!"
-#~ msgstr "Périphérique vide !"
 
 #~ msgid "Close"
 #~ msgstr "Fermer"
@@ -57,9 +191,6 @@ msgstr "Rafraîchir"
 
 #~ msgid "Device Name:"
 #~ msgstr "Nom du périphérique :"
-
-#~ msgid "Device Name"
-#~ msgstr "Nom du périphérique"
 
 #~ msgid "Show in File Browser…"
 #~ msgstr "Afficher dans le gestionnaire de fichiers…"
@@ -91,9 +222,6 @@ msgstr "Rafraîchir"
 #~ msgid "Disk:"
 #~ msgstr "Disque :"
 
-#~ msgid "No disk found."
-#~ msgstr "Aucun disque n'a été trouvé."
-
 #~ msgid "All"
 #~ msgstr "Tous"
 
@@ -108,9 +236,6 @@ msgstr "Rafraîchir"
 
 #~ msgid "Hide Info Panel"
 #~ msgstr "Masquer le panneau d'information"
-
-#~ msgid "Free"
-#~ msgstr "Libre"
 
 #~ msgid "OK"
 #~ msgstr "OK"
@@ -165,9 +290,3 @@ msgstr "Rafraîchir"
 
 #~ msgid "Desktop Integration:"
 #~ msgstr "Intégration dans le bureau :"
-
-#~ msgid "Details"
-#~ msgstr "Détails"
-
-#~ msgid "About Espace Libre"
-#~ msgstr "À propos de Espace Libre"

@@ -62,7 +62,7 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
 
         column_spacing = 6;
 
-        free_space_fraction_label = new Gtk.Label ("---Go") {
+        free_space_fraction_label = new Gtk.Label (_("---GB")) {
             valign = CENTER,
             hexpand = true,
             ellipsize = Pango.EllipsizeMode.START,
@@ -95,8 +95,8 @@ public class EspaceLibre.UsedSpaceBar : Gtk.Grid {
         free_space_percent_label.visible = true;
 
         free_space_fraction_label.label = _("Free: ") +
-            "<span font-features='tnum'>%.1f</span>".printf (_free_space / GIGA) + _("Go") + "/" +
-            "<span font-features='tnum'>%.1f</span>".printf (_space_size / GIGA) + _("Go");
+            "<span font-features='tnum'>%.1f</span>".printf (_free_space / GIGA) + _("GB") + "/" +
+            "<span font-features='tnum'>%.1f</span>".printf (_space_size / GIGA) + _("GB");
         var free_percent = _free_space * 100.0 / _space_size;
         free_space_percent_label.label = "%.0f%%".printf (free_percent);
 

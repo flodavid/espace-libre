@@ -8,25 +8,160 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr.flodavid.EspaceLibre\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-22 16:59+0000\n"
+"POT-Creation-Date: 2026-09-25 04:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/Application.vala:86 src/Views/SelectedDiskView.vala:8
-#: src/Views/SelectedDiskView.vala:52
-msgid "Disk"
+#: src/Application.vala:70
+msgid "Espace Libre"
 msgstr ""
 
-#: src/Views/SelectedDiskView.vala:12 src/Views/SelectedDiskView.vala:51
+#: src/VolumeEntry.vala:96
+msgid "Hard Drive Disk"
+msgstr ""
+
+#: src/VolumeEntry.vala:98
+msgid "USB Drive"
+msgstr ""
+
+#: src/VolumeEntry.vala:100
+msgid "Optical Disc"
+msgstr ""
+
+#: src/VolumeEntry.vala:102
+msgid "NVMe Solid State Drive"
+msgstr ""
+
+#: src/VolumeEntry.vala:104
+msgid "Solid State Drive"
+msgstr ""
+
+#: src/VolumeEntry.vala:106
+msgid "Unknown type"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:22
+msgid "Volume Details"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:26
+msgid "File System Format"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:27
+msgid "Unknown FS"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:34
+msgid "Volume Label"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:35
+msgid "Label"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:42
+msgid "Partition ID"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:43
+msgid "Partition"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:59 src/Views/SelectedVolumeView.vala:68
+msgid "Mount volume/device"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:77
+msgid "Ignore NTFS errors on the volume (by forcing dirty flag clearing)"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:80
+msgid "Clear error flags"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:108
+msgid "Drive Details"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:109
+msgid "Drive Infos"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:113
+msgid "Device Type"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:114
+msgid "Storage Device Type"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:160
+msgid "Eject Device"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:160
+msgid "Unmount Volume"
+msgstr ""
+
+#. Mount point with link
+#: src/Views/SelectedVolumeView.vala:193 src/Widgets/MountPointRow.vala:27
 msgid "Not mounted"
 msgstr ""
 
-#: src/Views/DisksView.vala:23
+#: src/Views/SelectedVolumeView.vala:248
+msgid "Are you sure ?"
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:249
+msgid "This will ignore potential errors with the NTFS partition."
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:250
+msgid "It is advised to run disk checking (chkdsk) from Windows."
+msgstr ""
+
+#: src/Views/SelectedVolumeView.vala:253
+msgid "Ignore the risks"
+msgstr ""
+
+#: src/Views/VolumesView.vala:26
 msgid "Refresh"
+msgstr ""
+
+#: src/Views/VolumesView.vala:40
+msgid "No volume found"
+msgstr ""
+
+#: src/Views/VolumesView.vala:41
+msgid "Mounted volumes should appear here"
+msgstr ""
+
+#: src/Views/VolumesView.vala:125
+#, c-format
+msgid "%d invalid volume was not added to the queue"
+msgid_plural "%d invalid volumes were not added to the queue"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/MountPointRow.vala:28
+msgid "Mount Point"
+msgstr ""
+
+#: src/Widgets/UsedSpaceBar.vala:65
+msgid "---GB"
+msgstr ""
+
+#: src/Widgets/UsedSpaceBar.vala:97
+msgid "Free: "
+msgstr ""
+
+#: src/Widgets/UsedSpaceBar.vala:98 src/Widgets/UsedSpaceBar.vala:99
+msgid "GB"
 msgstr ""

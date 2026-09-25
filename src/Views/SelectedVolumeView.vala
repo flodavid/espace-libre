@@ -19,8 +19,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
         /* Volume information */
         var volume_group = new Adw.PreferencesGroup () {
-            title = _("Partition Details"),
-            tooltip_text = _("Partition Name and Infos"),
+            title = _("Volume Details"),
         };
 
         var file_system_format = new Adw.ActionRow () {
@@ -32,7 +31,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         file_system_format.add_css_class ("property");
 
         var partition_label = new Adw.ActionRow () {
-            title = _("Partition Label"),
+            title = _("Volume Label"),
             subtitle = _("Label"),
             subtitle_selectable = true,
         };
@@ -78,7 +77,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         unlock_volume_button.tooltip_text = _("Ignore NTFS errors on the volume (by forcing dirty flag clearing)");
         var unlock_volume_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
         unlock_volume_button_box.append (new Gtk.Image.from_icon_name ("changes-allow"));
-        unlock_volume_button_box.append (new Gtk.Label (_("Clear errors")));
+        unlock_volume_button_box.append (new Gtk.Label (_("Clear error flags")));
         unlock_volume_button.set_child (unlock_volume_button_box);
         unlock_volume_revealer = new Gtk.Revealer () {
             transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
@@ -111,8 +110,8 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         };
 
         var device_type = new Adw.ActionRow () {
-            title = _("Device type"),
-            subtitle = _("Device Type"),
+            title = _("Device Type"),
+            subtitle = _("Storage Device Type"),
             subtitle_selectable = true,
         };
         //  Emphasize subtitle instead of title
