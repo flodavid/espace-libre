@@ -87,7 +87,7 @@ public class EspaceLibre.VolumeRow : Granite.Bin {
         volume_label.label = _partition_object.label;
         volume_label.label = _partition_object.label != null ? _partition_object.label : _partition_object.file_system;
         mount_point.label = _partition_object.mount_point;
-        
+
         space_bar.is_system = _partition_object.is_system ();
         update_sizes ();
     }

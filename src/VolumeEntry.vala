@@ -24,14 +24,14 @@ public class EspaceLibre.VolumeEntry : Object {
 
     public virtual bool can_unmount {
         get {
-            return mounted && glib_volume !=null && glib_volume.get_mount () != null
+            return mounted && glib_volume != null && glib_volume.get_mount () != null
                 && glib_volume.get_mount ().can_unmount ();
         }
     }
 
     public virtual bool can_eject {
         get {
-            return mounted && glib_volume !=null && glib_volume.get_mount () != null
+            return mounted && glib_volume != null && glib_volume.get_mount () != null
                 && glib_volume.get_mount ().can_eject ();
         }
     }
@@ -51,8 +51,8 @@ public class EspaceLibre.VolumeEntry : Object {
 
     // TODO add distinction between system dirs that need some free space to be able to expand and others that do not
     public bool is_system () {
-        return mount_point == "/" || mount_point == "/bin" || mount_point == "/boot" || mount_point == "/etc" 
-            || mount_point == "/home" || mount_point == "/lib" || mount_point == "/opt" ||  mount_point == "/root"
+        return mount_point == "/" || mount_point == "/bin" || mount_point == "/boot" || mount_point == "/etc"
+            || mount_point == "/home" || mount_point == "/lib" || mount_point == "/opt" || mount_point == "/root"
             || mount_point == "/run" || mount_point == "/sbin" || mount_point == "/srv" || mount_point == "/tmp"
             || mount_point == "/usr" || mount_point == "/var";
     }
@@ -83,7 +83,7 @@ public class EspaceLibre.VolumeEntry : Object {
     }
 
     public bool is_ntfs_partition () {
-        return fs_type ==  "ntfs3" || fs_type ==  "ntfs3";
+        return fs_type == "ntfs3" || fs_type == "fuse";
     }
 }
 

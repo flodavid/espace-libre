@@ -10,7 +10,7 @@ public class EspaceLibre.VolumesManager : Object {
 
     public VolumeEntry? current_volume { get; set; default = null; }
     public ListStore volumes { get; private set; }
-    
+
     public signal void invalids_found (int count);
     public signal void automatically_selected_item (uint position);
 
@@ -40,8 +40,7 @@ public class EspaceLibre.VolumesManager : Object {
     public void refresh () {
         info ("Remove and rescan volumes");
 
-        volumes.remove_all();
-        // volumes.splice (0, volumes.get_n_items (), new_volumes);
+        volumes.remove_all ();
 
         add_volumes_from_fstab ();
         add_volumes_from_volume_monitor ();
@@ -223,7 +222,7 @@ public class EspaceLibre.VolumesManager : Object {
      */
     private void add_volumes_from_fstab () {
         string fstab_content;
-        
+
         try {
             FileUtils.get_contents ("/run/host/etc/fstab", out fstab_content);
         } catch (FileError err) {
@@ -312,13 +311,13 @@ public class EspaceLibre.VolumesManager : Object {
             Volume volume = null;
             for (unowned List<Volume>? volume_elem = g_volumes.first ();
                     volume_elem != null;
-                    volume_elem = volume_elem.next)
-            {
+                    volume_elem = volume_elem.next
+            ) {
                 volume = volume_elem.data;
                 if (volume == null || volume.get_uuid () == null) continue;
 
                 bool already_known = false;
-                for (uint i = volumes.get_n_items (); i --> 0 && !already_known; ) {
+                for (uint i = volumes.get_n_items (); i -- > 0 && !already_known; ) {
                     var fs_volume = (VolumeEntry) volumes.get_item (i);
                     if (fs_volume.file_system == volume.get_identifier ("unix-device")) {
                         already_known = true;
@@ -347,7 +346,9 @@ public class EspaceLibre.VolumesManager : Object {
                             is_mounted = false;
                             mount_root = volume.get_activation_root ();
                         }
-                        filesystem_info = mount_root != null ? mount_root.query_filesystem_info ("filesystem::*") : null;
+                        filesystem_info = mount_root != null
+                            ? mount_root.query_filesystem_info ("filesystem::*")
+                            : null;
                         if (filesystem_info != null) {
                             if (filesystem_info.has_attribute (FileAttribute.FILESYSTEM_SIZE)) {
                                 kb_size = filesystem_info.get_attribute_uint64 (FileAttribute.FILESYSTEM_SIZE) / 1024;
@@ -376,7 +377,8 @@ public class EspaceLibre.VolumesManager : Object {
                         volumes.append (volume_entry);
                     } catch (GLib.Error error) {
                         if (!(error is IOError.CANCELLED)) {
-                            warning ("Error querying filesystem info for '%s': %s", volume.get_mount ().get_root ().get_uri (), error.message);
+                            warning ("Error querying filesystem info for '%s': %s",
+                                volume.get_mount ().get_root ().get_uri (), error.message);
                         }
                     }
                 }
@@ -396,7 +398,7 @@ public class EspaceLibre.VolumesManager : Object {
 
         string[] df = {"df", "-kT"};
         string[] spawn_env = {
-            "LANG=en_US", "LC_ALL=en_US", "LC_MESSAGES=en_US", "LC_TYPE=en_US","LANGUAGE=en_US", "LC_ALL=POSIX"
+            "LANG=en_US", "LC_ALL=en_US", "LC_MESSAGES=en_US", "LC_TYPE=en_US", "LANGUAGE=en_US", "LC_ALL=POSIX"
         };
         string df_output;
         GLib.Process.spawn_sync ("/", df, spawn_env, SpawnFlags.SEARCH_PATH, null, out df_output);
@@ -404,7 +406,7 @@ public class EspaceLibre.VolumesManager : Object {
         reading_df_stderr_out = true;
 
         VolumeEntry fs_volume;
-        for (uint i = volumes.get_n_items (); i --> 0; ) {
+        for (uint i = volumes.get_n_items (); i -- > 0; ) {
             fs_volume = (VolumeEntry) volumes.get_item (i);
             fs_volume.mounted = false; // set all volumes unmounted
         }
@@ -445,7 +447,7 @@ public class EspaceLibre.VolumesManager : Object {
                     // Exclude virtual filesystems
                     if (is_real_volume_and_has_space (kb_size, device_name, fs_type, mount_point)) {
                         fs_volume = null;
-                        // TODO use iterator
+                        // TODO use iterator with Gio.ListStore
                         for (var i = 0; i < volumes.n_items && fs_volume == null; ++i) {
                             var current_volume = (VolumeEntry) volumes.get_item (i);
                             if (current_volume == null) {
@@ -456,7 +458,8 @@ public class EspaceLibre.VolumesManager : Object {
                                 fs_volume = current_volume;
 
                                 string partition = fs_volume.file_system.split ("/")[2];
-                                fs_volume.device_type = partition_rotational_type (partition, partition.substring (0, 3));
+                                fs_volume.device_type =
+                                    partition_rotational_type (partition, partition.substring (0, 3));
                             }
                         }
 
@@ -476,7 +479,6 @@ public class EspaceLibre.VolumesManager : Object {
         }
 
         reading_df_stderr_out = false;
-        //  loadSettings(); // to get the mountCommands
     }
 
 
@@ -486,7 +488,7 @@ public class EspaceLibre.VolumesManager : Object {
         }
 
         bool found = false;
-        for (uint i = volumes.get_n_items (); i --> 0 && !found; ) {
+        for (uint i = volumes.get_n_items (); i -- > 0 && !found; ) {
             var volume = (VolumeEntry) volumes.get_item (i);
             if (volume != null && current_volume.file_system == volume.file_system) {
                 current_volume = volume;
@@ -498,25 +500,7 @@ public class EspaceLibre.VolumesManager : Object {
         return current_volume != null;
     }
 
-    public void on_items_changed () {
-        //  bool before = has_items;
-
-        //  if (has_items) {
-        //      if (!before) {
-        //          warning("had no items, but now has some");
-        //          current_disk = (DiskEntry) volumes.get_item (0);
-        //      } else {
-        //          warning("still some items");
-        //      }
-        //  } else {
-        //      if (before) {
-        //          warning("no more items");
-        //          current_disk = null;
-        //      } else {
-        //          warning("still no items");
-        //      }
-        //  }
-    }
+    public void on_items_changed () { }
 
     /**
      * Split strings separated by tabs and (multiple) spaces to an array

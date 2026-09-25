@@ -57,7 +57,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             halign = Gtk.Align.CENTER
         };
         unmount_eject_button.tooltip_text = _("Mount volume/device");
-        var unmount_eject_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        var unmount_eject_button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 4);
         unmount_eject_button_box.append (new Gtk.Image.from_icon_name ("media-eject-symbolic"));
         unmount_eject_button_box.append (new Gtk.Label ("Unmount"));
         unmount_eject_button.set_child (unmount_eject_button_box);
@@ -66,7 +66,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             halign = Gtk.Align.CENTER
         };
         mount_button.tooltip_text = _("Mount volume/device");
-        var mount_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        var mount_button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 4);
         mount_button_box.append (new Gtk.Image.from_icon_name ("media-playback-start-symbolic"));
         mount_button_box.append (new Gtk.Label ("Mount"));
         mount_button.set_child (mount_button_box);
@@ -75,7 +75,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             halign = Gtk.Align.CENTER
         };
         unlock_volume_button.tooltip_text = _("Ignore NTFS errors on the volume (by forcing dirty flag clearing)");
-        var unlock_volume_button_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+        var unlock_volume_button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 4);
         unlock_volume_button_box.append (new Gtk.Image.from_icon_name ("changes-allow"));
         unlock_volume_button_box.append (new Gtk.Label (_("Clear error flags")));
         unlock_volume_button.set_child (unlock_volume_button_box);
@@ -84,7 +84,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             child = unlock_volume_button,
         };
 
-        mount_actions_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10) {
+        mount_actions_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 10) {
             halign = Gtk.Align.CENTER
         };
         mount_actions_box.append (mount_button);
@@ -116,7 +116,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
         };
         //  Emphasize subtitle instead of title
         device_type.add_css_class ("property");
-        
+
         drive_group.add (device_type);
 
         /* General layout and signals */
@@ -175,7 +175,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                     mount_eject_working_stack.visible_child = mount_actions_box;
                 } else {
                     mount_eject_working_stack.visible = false;
-                    debug ("%s CANNOT be mounted in the end", volumes_manager.current_volume.file_system);      
+                    debug ("%s CANNOT be mounted in the end", volumes_manager.current_volume.file_system);
                 }
             }
 
@@ -213,7 +213,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
     private void mount_current_volume () {
         working_spinner.start ();
         mount_eject_working_stack.visible_child = working_spinner;
-        
+
         volumes_manager.mount_current.begin ((obj, res) => {
             bool success = volumes_manager.mount_current.end (res);
 
@@ -234,7 +234,9 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
      * Show button to ask for dirty flag removal on NTFS volumes that failed to mount
      */
     private void check_if_show_unlock_volume () {
-        if (volumes_manager.current_volume.is_ntfs_partition () && volumes_manager.current_volume.has_failed_to_mount == true) {                
+        if (volumes_manager.current_volume.is_ntfs_partition ()
+            && volumes_manager.current_volume.has_failed_to_mount == true
+        ) {
             unlock_volume_revealer.reveal_child = true;
         } else {
             unlock_volume_revealer.reveal_child = false;
@@ -249,14 +251,14 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             _("This will ignore potential errors with the NTFS partition.") + "\n"
             + _("It is advised to run disk checking (chkdsk) from Windows."),
             "dialog-warning", Gtk.ButtonsType.CANCEL);
-        confirmation_window.set_transient_for(parent_window);
+        confirmation_window.set_transient_for (parent_window);
         var yes_button = confirmation_window.add_button (_("Ignore the risks"), Gtk.ResponseType.YES);
         #if GRANITE_7_6_OR_LOWER
             yes_button.add_css_class (Granite.STYLE_CLASS_DESTRUCTIVE_ACTION);
         #else
-            yes_button.add_css_class (Granite.CssClass.DESTRUCTIVE);        
+            yes_button.add_css_class (Granite.CssClass.DESTRUCTIVE);
         #endif
-        confirmation_window.set_default_response(Gtk.ResponseType.CANCEL);
+        confirmation_window.set_default_response (Gtk.ResponseType.CANCEL);
         confirmation_window.present ();
 
         confirmation_window.response.connect ((response) => {
@@ -265,9 +267,12 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
             if (response == Gtk.ResponseType.YES) {
                 try {
                     #if IS_FLATPAK
-                        string[] ntfsfix = {"flatpak-spawn", "--host", "pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
+                        string[] ntfsfix = {
+                            "flatpak-spawn", "--host", "pkexec", "ntfsfix",
+                            volumes_manager.current_volume.file_system, "-d"
+                        };
                     #else
-                        string[] ntfsfix = {"pkexec", "ntfsfix",  volumes_manager.current_volume.file_system, "-d"};
+                        string[] ntfsfix = { "pkexec", "ntfsfix", volumes_manager.current_volume.file_system, "-d" };
                     #endif
                     string[] spawn_env = Environ.get ();
                     int standard_output;
@@ -275,7 +280,8 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
                     Pid child_pid;
 
-                    Process.spawn_async_with_pipes ("/", ntfsfix, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+                    Process.spawn_async_with_pipes (
+                        "/", ntfsfix, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
                         null, out child_pid, null, out standard_output, out standard_error);
 
                     ChildWatch.add (child_pid, (pid, status) => {
@@ -300,7 +306,7 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
                             while (error_stream.gets (buf) != null) {
                                 ntfsfix_error += (string) buf;
                             }
-                           
+
                             if (ntfsfix_error.length > 0) {
                                 warning ("ntfsfix invocation error: %s", ntfsfix_error);
                                 return;
