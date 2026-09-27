@@ -66,7 +66,7 @@ public class EspaceLibre.MainWindow : Gtk.ApplicationWindow {
         };
         set_titlebar (null_title);
 
-        var settings = new Settings ("fr.flodavid.EspaceLibre");
+        var settings = new Settings ("io.github.flodavid.EspaceLibre");
         settings.bind ("pane-position", paned, "position", SettingsBindFlags.DEFAULT);
 
         hide_button.clicked.connect (hide_current_volume_pane);

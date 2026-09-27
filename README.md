@@ -19,10 +19,12 @@ bars and text style will be better for volume rows.
 
 ### Flatpak
 
+At the root of the project:
+
 ```shell
-flatpak-builder --install-deps-from=flathub --ccache flatpak-build fr.flodavid.EspaceLibre.yml
-flatpak build-bundle espaceLibreRepo fr.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo fr.flodavid.EspaceLibre daily
-flatpak install fr.flodavid.EspaceLibre.flatpak
+flatpak-builder --install-deps-from=flathub --ccache flatpak-build io.github.flodavid.EspaceLibre.yml
+flatpak build-bundle espaceLibreRepo io.github.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo io.github.flodavid.EspaceLibre daily
+flatpak install io.github.flodavid.EspaceLibre.flatpak
 ```
 
 ### Ninja
@@ -44,8 +46,13 @@ After building
 
 #### Install
 
-To install, use `ninja install`, then execute with `fr.flodavid.espacelibre`
+To install, use `ninja install`, then execute with `io.github.espacelibre`
 
     ninja install
-    fr.flodavid.espacelibre
+    io.github.espacelibre
 
+### Translations
+
+To update translations files, go inside the *build* directory, then run:
+
+    ninja io.github.flodavid.EspaceLibre-update-po

@@ -38,8 +38,8 @@ msgstr ""
 #~ msgid "Dark style support"
 #~ msgstr "Prise en charge du thème sombre"
 
-#~ msgid "fr.flodavid.espaceLibre"
-#~ msgstr "fr.flodavid.espaceLibre"
+#~ msgid "io.github.espaceLibre"
+#~ msgstr "io.github.espaceLibre"
 
 #~ msgid "About Espace Libre"
 #~ msgstr "À propos de Espace Libre"

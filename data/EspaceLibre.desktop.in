@@ -7,7 +7,7 @@ Comment=Visualise volumes size and free space. (Un)Mount volumes.
 Categories=Utility;GTK;
 Keywords=Disk;Space;Libre;
 
-Icon=fr.flodavid.EspaceLibre
+Icon=io.github.flodavid.EspaceLibre
 Exec=espacelibre
 SingleMainWindow=true
 StartupNotify=true

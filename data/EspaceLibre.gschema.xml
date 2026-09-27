@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema path="/fr/flodavid/EspaceLibre/" id="fr.flodavid.EspaceLibre">
+  <schema path="/io/github/flodavid/EspaceLibre/" id="io.github.flodavid.EspaceLibre">
     <key name="window-height" type="i">
-      <default>475</default>
+      <default>440</default>
       <summary>Most recent window height</summary>
       <description>Most recent window height</description>
     </key>
     <key name="window-width" type="i">
-      <default>650</default>
+      <default>700</default>
       <summary>Most recent window width</summary>
       <description>Most recent window width</description>
     </key>
@@ -18,7 +18,7 @@
     </key>
 
     <key name="pane-position" type="i">
-      <default>370</default>
+      <default>480</default>
       <summary>Pane position between the queue and now playing view</summary>
       <description>Pane position between the queue and now playing view</description>
     </key>

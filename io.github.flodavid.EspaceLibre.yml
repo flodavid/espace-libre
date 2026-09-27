@@ -1,4 +1,4 @@
-id: fr.flodavid.EspaceLibre
+id: io.github.flodavid.EspaceLibre
 runtime: io.elementary.Platform
 runtime-version: '8.2'
 sdk: io.elementary.Sdk

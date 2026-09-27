@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beatbox 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 04:14+0200\n"
+"POT-Creation-Date: 2026-09-26 17:02+0200\n"
 "PO-Revision-Date: 2025-09-10 08:55+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://l10n.elementaryos.org/projects/espacelibre/"
@@ -119,20 +119,20 @@ msgstr "Démonter le Volume"
 msgid "Not mounted"
 msgstr "Non monté"
 
-#: src/Views/SelectedVolumeView.vala:248
+#: src/Views/SelectedVolumeView.vala:250
 msgid "Are you sure ?"
 msgstr "Êtes-vous sûrs ?"
 
-#: src/Views/SelectedVolumeView.vala:249
+#: src/Views/SelectedVolumeView.vala:251
 msgid "This will ignore potential errors with the NTFS partition."
 msgstr "Ceci ignorera les potentielles erreurs de la partition NTFS."
 
-#: src/Views/SelectedVolumeView.vala:250
+#: src/Views/SelectedVolumeView.vala:252
 msgid "It is advised to run disk checking (chkdsk) from Windows."
 msgstr ""
 "Il est recommandé d'exécuter la vérification du disque (chkdsk) sous Windows"
 
-#: src/Views/SelectedVolumeView.vala:253
+#: src/Views/SelectedVolumeView.vala:255
 msgid "Ignore the risks"
 msgstr "Ignorer les risques"
 

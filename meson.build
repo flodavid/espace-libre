@@ -1,5 +1,5 @@
 project(
-  'fr.flodavid.EspaceLibre',
+  'io.github.flodavid.EspaceLibre',
   'vala', 'c',
   version: '1.1.0',
   meson_version: '>=0.58.0'

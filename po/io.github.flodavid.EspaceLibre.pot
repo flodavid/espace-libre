@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the fr.flodavid.EspaceLibre package.
+# This file is distributed under the same license as the io.github.flodavid.EspaceLibre package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fr.flodavid.EspaceLibre\n"
+"Project-Id-Version: io.github.flodavid.EspaceLibre\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 04:14+0200\n"
+"POT-Creation-Date: 2026-09-26 16:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,19 +115,19 @@ msgstr ""
 msgid "Not mounted"
 msgstr ""
 
-#: src/Views/SelectedVolumeView.vala:248
+#: src/Views/SelectedVolumeView.vala:250
 msgid "Are you sure ?"
 msgstr ""
 
-#: src/Views/SelectedVolumeView.vala:249
+#: src/Views/SelectedVolumeView.vala:251
 msgid "This will ignore potential errors with the NTFS partition."
 msgstr ""
 
-#: src/Views/SelectedVolumeView.vala:250
+#: src/Views/SelectedVolumeView.vala:252
 msgid "It is advised to run disk checking (chkdsk) from Windows."
 msgstr ""
 
-#: src/Views/SelectedVolumeView.vala:253
+#: src/Views/SelectedVolumeView.vala:255
 msgid "Ignore the risks"
 msgstr ""
 

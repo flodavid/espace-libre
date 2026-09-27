@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>fr.flodavid.EspaceLibre</id>
+  <id>io.github.flodavid.EspaceLibre</id>
   
   <name>Espace Libre</name>
   <summary>Visualize the usage of your volumes or mount/unmount them</summary>
@@ -8,7 +8,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <branding>
-    <color type="primary">#f37329</color>
+    <color type="primary">#4185f4</color>
     <color type="primary" scheme_preference="light">#4185f4</color>
     <color type="primary" scheme_preference="dark">#a0c2f9</color>
   </branding>
@@ -76,8 +76,8 @@
     </i>
   </description>
 
-  <launchable type="desktop-id">fr.flodavid.EspaceLibre.desktop</launchable>
-  <translation type="gettext">fr.flodavid.EspaceLibre</translation>
+  <launchable type="desktop-id">io.github.flodavid.EspaceLibre.desktop</launchable>
+  <translation type="gettext">io.github.flodavid.EspaceLibre</translation>
   <screenshots>
     <screenshot environment="pantheon" type="default">
       <caption>Used volumes space represented using filled bars, ligth theme</caption>
