@@ -28,20 +28,18 @@
     <control>touch</control>
   </supports>
 
-  <url type="homepage">https://github.com/flodavid/espacelibre</url>
+  <url type="homepage">https://github.com/flodavid/espace-libre</url>
 
   <developer id="fr.flodavid">
     <name>flodavid</name>
   </developer>
 
   <releases>
-    <release version="1.0.0" date="2026-07-18" >
+    <release version="1.1.0" date="2026-09-12" >
       <description>
-        <p>Initial limited release</p>
+        <p>Public release!</p>
         <ul>
-          <li>Volumes are listed with their total and free space</li>
-          <li>Some details about the disk and volumes are available in the details panel</li>
-          <li>Volumes can be (un)mounted. NTFS volumes are force-mountables of they fail to mount on first try</li>
+          <li>Add button to hide the details panel</li>
         </ul>
       </description>
     </release>
@@ -50,11 +48,13 @@
         <p>Add Flatpak support</p>
       </description>
     </release>
-    <release version="1.1.0" date="2026-09-12" >
+    <release version="1.0.0" date="2026-07-18" >
       <description>
-        <p>Public release!</p>
+        <p>Initial limited release</p>
         <ul>
-          <li>Add button to hide the details panel</li>
+          <li>Volumes are listed with their total and free space</li>
+          <li>Some details about the disk and volumes are available in the details panel</li>
+          <li>Volumes can be (un)mounted. NTFS volumes are force-mountables of they fail to mount on first try</li>
         </ul>
       </description>
     </release>
@@ -71,9 +71,9 @@
     <p>
       It also allows you to mount or unmount volumes. If a NTFS volumes fails to mount, you can ignore the errors and force mounting it (at your own risks).
     </p>
-    <i>
-      "Espace Libre" is French for "Free Space"
-    </i>
+    <p>
+      <em>"Espace Libre" is French for "Free Space"</em>
+    </p>
   </description>
 
   <launchable type="desktop-id">io.github.flodavid.EspaceLibre.desktop</launchable>
