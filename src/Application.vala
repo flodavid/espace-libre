@@ -45,6 +45,7 @@ public class EspaceLibre.Application : Gtk.Application {
         var gtk_settings = Gtk.Settings.get_default ();
 
         #if IS_FLATPAK
+            // Seems to not be needed with elementary platform 9+
             gtk_settings.gtk_theme_name = "elementary";
         #endif
         gtk_settings.gtk_icon_theme_name = "elementary";

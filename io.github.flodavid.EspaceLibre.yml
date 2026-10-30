@@ -15,6 +15,8 @@ finish-args:
   - '--filesystem=xdg-run/gvfsd'
   - '--filesystem=xdg-run/gvfs'
   - '--talk-name=org.gtk.vfs.*'
+  # To be able to run flatpak-spawn --host of pkexec
+  - '--talk-name=org.freedesktop.Flatpak'
 
 modules:
   - name: EspaceLibre
