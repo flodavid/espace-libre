@@ -35,6 +35,17 @@
   </developer>
 
   <releases>
+    <release version="1.1.1" date="2026-09-12" >
+      <description>
+        <p>Improvements/fixes:</p>
+        <ul>
+          <li>Long names made the selected volume view very large, enlarging the application with it</li>
+          <li>Mount point is now hidden when it is unknown, instead of showing the one of the previous volume</li>
+          <li>"Clear error flags" button did not work</li>
+        </ul>
+        <p>Bump elementary runtime to 9.1</p>
+      </description>
+    </release>
     <release version="1.1.0" date="2026-09-12" >
       <description>
         <p>Public release!</p>
@@ -80,7 +91,7 @@
   <translation type="gettext">io.github.flodavid.EspaceLibre</translation>
   <screenshots>
     <screenshot environment="pantheon" type="default">
-      <caption>Used volumes space represented using filled bars, ligth theme</caption>
+      <caption>Used volumes space represented using filled bars, light theme</caption>
       <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot.png?raw=true</image>
     </screenshot>
     <screenshot environment="pantheon" type="default">
@@ -88,7 +99,7 @@
       <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot-dark.png?raw=true</image>
     </screenshot>
     <screenshot environment="pantheon" type="default">
-      <caption>Used disks space represented using filled bars, ligth theme</caption>
+      <caption>Selected volume informations</caption>
       <image>https://github.com/flodavid/espace-libre/blob/main/data/screenshot-details.png?raw=true</image>
     </screenshot>
   </screenshots>
