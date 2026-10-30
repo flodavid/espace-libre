@@ -40,9 +40,11 @@ public class EspaceLibre.VolumeRow : Granite.Bin {
     private EspaceLibre.UsedSpaceBar space_bar;
 
     public VolumeRow (Gtk.SizeGroup labels_size_group) {
-        volume_image = new Gtk.Image ();
-        volume_image.height_request = 38;
-        volume_image.width_request = 38;
+        volume_image = new Gtk.Image () {
+            icon_size = Gtk.IconSize.LARGE,
+            height_request = 38,
+            width_request = 38,
+        };
 
         var aspect_frame = new Gtk.AspectFrame (0.5f, 0.5f, 1, false) {
             child = volume_image

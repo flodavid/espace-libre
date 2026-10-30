@@ -26,6 +26,7 @@ public class EspaceLibre.MountPointRow : Gtk.Box {
         // Mount point with link
         mount_point = new Gtk.LinkButton (_("Not mounted")) {
             tooltip_text = _("Mount Point"),
+            can_shrink = true
         };
 
         append (dir_icon);
@@ -33,7 +34,12 @@ public class EspaceLibre.MountPointRow : Gtk.Box {
     }
 
     public void update_mount_point (string? mount_point_location) {
-        if (mount_point_location == null) return;
+        if (mount_point_location == null) {
+            mount_point.label = "";
+            mount_point.uri = "";
+            dir_icon.icon_name = "";
+            return;
+        }
 
         mount_point.label = mount_point_location;
         mount_point.uri = "file://" + mount_point_location;

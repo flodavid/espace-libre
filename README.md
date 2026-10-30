@@ -22,8 +22,8 @@ bars and text style will be better for volume rows.
 At the root of the project:
 
 ```shell
-flatpak-builder --install-deps-from=flathub --ccache flatpak-build io.github.flodavid.EspaceLibre.yml
-flatpak build-bundle espaceLibreRepo io.github.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo io.github.flodavid.EspaceLibre daily
+flatpak-builder --install-deps-from=appcenter --repo=espaceLibreRepo --ccache flatpak-build io.github.flodavid.EspaceLibre.yml
+flatpak build-bundle espaceLibreRepo io.github.flodavid.EspaceLibre.flatpak --runtime-repo=https://flatpak.elementary.io/repo.flatpakrepo io.github.flodavid.EspaceLibre
 flatpak install io.github.flodavid.EspaceLibre.flatpak
 ```
 

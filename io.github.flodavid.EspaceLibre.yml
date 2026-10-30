@@ -1,6 +1,6 @@
 id: io.github.flodavid.EspaceLibre
 runtime: io.elementary.Platform
-runtime-version: '8.2'
+runtime-version: '9.1'
 sdk: io.elementary.Sdk
 command: espacelibre
 finish-args:
