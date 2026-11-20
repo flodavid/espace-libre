@@ -43,7 +43,7 @@ public class EspaceLibre.VolumesManager : Object {
         volumes.remove_all ();
 
         add_volumes_from_fstab ();
-        add_volumes_from_volume_monitor ();
+        add_volumes_from_gvfs ();
 
         read_df ();
 
@@ -305,7 +305,7 @@ public class EspaceLibre.VolumesManager : Object {
         }
     }
 
-    private void add_volumes_from_volume_monitor () {
+    private void add_volumes_from_gvfs () {
         var g_volumes = VolumeMonitor.@get ().get_volumes ();
         if (g_volumes != null) {
             Volume volume = null;
@@ -359,6 +359,8 @@ public class EspaceLibre.VolumesManager : Object {
                             if (filesystem_info.has_attribute (FileAttribute.FILESYSTEM_TYPE)) {
                                 fs_type = filesystem_info.get_attribute_string (FileAttribute.FILESYSTEM_TYPE);
                             }
+                        } else {
+                            fs_type = get_fs_type (volume.get_identifier ("unix-device"));
                         }
 
                         string unix_device = volume.get_identifier ("unix-device");
@@ -553,7 +555,7 @@ public class EspaceLibre.VolumesManager : Object {
             GLib.Process.spawn_sync ("/", cat, spawn_env, SpawnFlags.SEARCH_PATH, null, out cat_output, out cat_error);
             cat_output = cat_output.strip ();
         } catch (SpawnError e) {
-            warning ("Error while removing NTFS volume dirty flag: %s", e.message);
+            warning ("Error while reading rotational flag for the device: %s", e.message);
         }
 
         if (cat_output == "0") {
@@ -566,6 +568,50 @@ public class EspaceLibre.VolumesManager : Object {
             warning ("Failed to check if the disk device is an HDD:\n\t%s\n%s", cat_output, cat_error);
             return -1;
         }
+    }
+
+    /**
+     * reads the blkid-command result for the given UNIX device path
+     */
+    private string? get_fs_type (string unix_device) {
+        debug ("get_fs_type of %s", unix_device);
+
+        string[] blkid = {"blkid", unix_device};
+        string[] spawn_env = { };
+        string blkid_output;
+        string blkid_error = "";
+        try {
+            GLib.Process.spawn_sync ("/", blkid, spawn_env, SpawnFlags.SEARCH_PATH, null, out blkid_output, out blkid_error);
+            blkid_output = blkid_output.strip ();
+        } catch (SpawnError e) {
+            warning ("Error while reading rotational flag for the device: %s", e.message);
+        }
+
+        int type_index = blkid_output.index_of ("TYPE=\"");
+        bool has_quotes = true;
+        if (type_index == -1) {
+            has_quotes = false;
+            type_index = blkid_output.index_of ("TYPE=") - 1;
+        }
+        if (type_index != -1) {
+            string output_substr = blkid_output.substring(type_index + 6);
+
+            int end_fstype_index;
+            if (has_quotes) {
+                end_fstype_index = output_substr.index_of ("\"");
+            } else {
+                end_fstype_index = output_substr.index_of (" ");
+            }
+
+            if (end_fstype_index > 0) {
+                string format = output_substr.substring (0, end_fstype_index);
+                debug ("%s partition has %s format", unix_device, format);
+                return format;
+            }
+        } else {
+            warning ("Failed to check if the disk partition format:\n\t%s\n%s", blkid_output, blkid_error);
+        }
+        return null;
     }
 
     /**

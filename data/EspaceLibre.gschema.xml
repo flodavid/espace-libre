@@ -18,7 +18,7 @@
     </key>
 
     <key name="pane-position" type="i">
-      <default>480</default>
+      <default>580</default>
       <summary>Pane position between the queue and now playing view</summary>
       <description>Pane position between the queue and now playing view</description>
     </key>

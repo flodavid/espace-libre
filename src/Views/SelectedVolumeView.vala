@@ -216,6 +216,11 @@ public class EspaceLibre.SelectedVolumeView : Gtk.Box {
 
         volumes_manager.mount_current.begin ((obj, res) => {
             bool success = volumes_manager.mount_current.end (res);
+            if (!success) {
+                warning ("Failed to mount volume");
+            } else {
+                info ("Volume mounting success");
+            }
 
             working_spinner.stop ();
             volumes_manager.current_volume.mounted = success;

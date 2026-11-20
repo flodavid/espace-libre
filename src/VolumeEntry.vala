@@ -83,7 +83,7 @@ public class EspaceLibre.VolumeEntry : Object {
     }
 
     public bool is_ntfs_partition () {
-        return fs_type == "ntfs3" || fs_type == "fuse";
+        return fs_type == "ntfs3" || fs_type == "fuse" || fs_type == "ntfs" || fs_type == "ntfs-3g";
     }
 }
 

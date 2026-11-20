@@ -77,7 +77,7 @@
       Quickly visualize the space used and available on your storage volumes.
     </p>
     <p>
-      This simple utility is an alternative to KDiskFree that shows your volumes gives some information about them.
+      This simple utility is an alternative to KDiskFree that list your volumes and gives some information about them.
     </p>
     <p>
       It also allows you to mount or unmount volumes. If a NTFS volumes fails to mount, you can ignore the errors and force mounting it (at your own risks).
